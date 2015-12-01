@@ -2,14 +2,11 @@
 <meta charset="utf-8">
 <script type="text/javascript" src="/content_model_viewer/resources/jquery.js"></script>
 
-
-
-
 <style>
 
 body {
-  background: rgb(255,255,255);
-  /*background: rgb(25,25,25);*/
+  /*background: rgb(255,255,255);*/
+  background: rgb(55,55,55);
   margin: 0;
 
 }
@@ -20,7 +17,7 @@ body .tooltip {
 .link-5 {
   fill: none;
   stroke: #000;
-  stroke-dasharray: 1px 2px;
+  /*stroke-dasharray: 1px 2px;*/
   stroke-opacity: .5;
   stroke-width: .9px;
 }
@@ -44,12 +41,12 @@ body .tooltip {
   pointer-events: none;
   position: relative;
   z-index: 100;
-  color: #444;
+  color: #FFF;
   text-shadow:
-   -1px -1px .1px #fff,  
-    1px -1px .1px #fff,
-    -1px 1px .1px #fff,
-     1px 1px .1px #fff;
+   -1px -1px .1px #000,  
+    1px -1px .1px #000,
+    -1px 1px .1px #000,
+     1px 1px .1px #000;
   text-transform: uppercase;
 }
 
@@ -78,27 +75,34 @@ h4 {
 </style>
 <body>
 <script src="/content-links/d3-master/d3.min.js"></script>
+<script type="text/javascript" src="/content-links/ForceBundle/d3-ForceEdgeBundling.js"></script>
 <script src="/content-links/d3-master/lib/colorbrewer/colorbrewer.js"></script>
 <style src="/content-links/d3-master/lib/colorbrewer/colorbrewer.css"></style>
+
 <div class="node-information"></div>
 
 <script>
 
-// to do: experiment with specific force links: http://bl.ocks.org/sathomas/774d02a21dc1c714def8
-
-// force layout settings https://github.com/mbostock/d3/wiki/Force-Layout#friction
-
-var width = window.innerWidth-15,
-    height = window.innerHeight-15;
- 
-// var color = d3.scale.category20c();
-var color = d3.scale.ordinal()
-    // .domain(d3.range(10))
-    .range(colorbrewer.Paired[9]);
-    // http://bl.ocks.org/mhkeller/10504471
+// About:
+// This combines the basic D3 Force view with a newer "ForceBundle" graph.
+// We first invoke the D3 Force to arange the nodes, and then ForceBundle to
+// make it all pretty.
 
 // info on force graphing
 // http://bl.ocks.org/sathomas/1ca23ee9588580d768aa
+// to do: experiment with specific force links: http://bl.ocks.org/sathomas/774d02a21dc1c714def8
+// force layout settings https://github.com/mbostock/d3/wiki/Force-Layout#friction
+
+// set the vis size
+var width = window.innerWidth-15,
+    height = window.innerHeight-15;
+
+// set the colors we wish to use
+var color = d3.scale.ordinal()
+    .range(colorbrewer.Paired[9]);
+    // Showcase of colorbrewer pallets: http://bl.ocks.org/mhkeller/10504471
+
+// set up the basic force direction graph
 var force = d3.layout.force()
     .linkDistance(function(node) {
       return 30;
@@ -111,17 +115,19 @@ var force = d3.layout.force()
        return '-' + ( ((Math.abs(node.radius) * Math.abs(node.radius)) * 3) + 140 );
     })
     .linkStrength(function(node) {
-       return node.value * .5;
+       return ( node.value + .5 ) * .5;
     })
     // .alpha(-.1)
     // .friction(.5)
     .size([width, height]);
 
+// Append the SVG contianter for the vis
 var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
+var svgInner = svg.append("g");
 
-//tooltip
+// Append the tooltip
 var tooltip = d3.select("body")
   .append("div")
   .attr('class','tooltip')
@@ -130,29 +136,22 @@ var tooltip = d3.select("body")
   .style("visibility", "hidden")
   .html("<a href='#'>a simple tooltip</a>");
 
-
+// Load the data
 d3.json("content-model.json", function(error, graph) {
   if (error) console.log(error,graph);
 
-  var nodes = graph.nodes.slice(),
-      links = [],
-      bilinks = [];
+var nodes = graph.nodes.slice(),
+    links = [],
+    bilinks = [];
 
-  // graph.links.forEach(function(link) {
-  //   var s = nodes[link.source],
-  //       t = nodes[link.target],
-  //       i = {}; // intermediate node
-  //   nodes.push(i);
-  //   links.push({source: s, target: i}, {source: i, target: t});
-  //   bilinks.push([s, i, t]);
-  // });
 
+  // Setup the force direction graph
   force
       .nodes(nodes)
       .links(graph.links);
       // .start();
 
-  // afix the first to the center
+  // Position certain points
   
   // Assign variables to the position of each item in the array.
   // It is equal to the "Row" column from the google doc minus 1 (1 = 0)
@@ -216,137 +215,146 @@ d3.json("content-model.json", function(error, graph) {
   nodes[nodeExits].fixed = true;
   nodes[nodeExits].x = width*.9;
   nodes[nodeExits].y = height*.1;
+  
 
+  // Start the force graph
   force.start();
 
-
-  var link = svg.selectAll(".link")
-    .data(graph.links)
-    .enter().append("line")
-      // .attr("link-strength", function(d) {  return ((d.value) * 10) })
-      // .attr("link-distance", function(d) {  return ((d.value) * 10 ) })
-      // .attr("charge", (function(d) { 
-      //   var chargeTemp = Math.pow(d.value*10,6);
-      //   // console.log(d.value, chargeTemp); 
-      //   return ("-"+chargeTemp);
-      // }))
-      .style("stroke", function(d) { return color(d.target.group); })
-      .attr("class", function(d) {  return "link-"+(d.value) * 100 });
-      // .style("stroke-width", function(d) { return Math.sqrt(d.value); });
-
-
-//   var node = svg.selectAll(".node")
-//       .data(graph.nodes)
-//     .enter().append("circle")
-//       .attr("class", "node")
-//       .attr("r", 5)
-//       .style("fill", function(d) { console.log('trace: ' + d.name); return color(d.group);        
-// })
-//       .call(force.drag);
-  var node = svg.selectAll(".node")
+  // Add basic SVG containers and allow them to be drug about
+  var node = svgInner.selectAll(".node")
     .data(graph.nodes)
     .enter().append("g")
     // .attr("d.x", 250)
     // .attr("d.y", 250)
     .attr("class", "node")
-    // to enable interactivity
     .call(force.drag);
 
-/*
-
-  // add the area circle
-  node.append("circle")
-      // .attr("class", "node")
-      .attr('class','area-circle')
-      // .attr("class", function(d) { return "node-" + (d.name).replace(/^(.*[\\\/])/g,''); })
-      .attr("r", function(d) {  return (d.radius + 3) * Math.log(d.radius/.7 + 10) })
-      .style("fill", function(d) {   return 'rgba('+hexToRgb(color(d.group))+',.95)'; })
-      .style("stroke", function(d) {   return 'rgba(0,0,0,.95)'; })
-      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius); })
-      .on("mousedown", function(d){  renderConnectionTable(); })            
-      .on("mousemove", function(){   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){    connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); }); 
-      // oy, we're adding the tooltip twice, work on this ...
-
-      */
-
-  // add the smaller marker circle 
-  node.append("circle")
-      .attr("class", "node-core")
-      // .attr("class", function(d) { return "node-" + (d.name).replace(/^(.*[\\\/])/g,''); })
-      .attr("r", function(d) {  return 3; })
-      .on("click", function(d){  window.open('http://www.ebi.ac.uk'+d.name.trim(),'_blank'); })
-      // .style("stroke", function(d) {  return coloriseSphere(); })
-      // .style("fill", function(d) {  return color(d.group);  })
-      .style("fill", function(d) {  return coloriseSphere(); });
+  // The basic D3 Force lines,
+  // they'll act as a little "loading" animation
+  var link = svgInner.selectAll(".link")
+    .data(graph.links)
+    .enter().append("line")
+      .style("stroke", function(d) { return color(d.target.group); })
+      .attr("class", function(d) {  return "link-"+(d.value) * 100 })
+      .style("stroke-width", function(d) { return "0.1"; });
 
 
-  node.append('svg:polygon')
-      .attr('points', function(d){ return scaleMarker(d); })
-      .style("fill", function(d) {  return 'rgba('+hexToRgb(color(d.group))+',.95)'; })
-      .style("stroke", function(d) {   return 'rgba(0,0,0,.95)'; })
-      // .attr('stroke', function(d,i) { return color(i)})
-      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius); })
-      .on("mousedown", function(d){  renderConnectionTable(); })            
-      .on("mousemove", function(){   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){    connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); }); 
-
-  node.append("text")
-      .attr("dx", function(d) { console.log(d); return 8 + d.radius * 2.4; })
+    node
+      .append('text')
+      .attr("dx", function(d) { return 8 + d.radius * 1.4; })
       // .attr("dx", function(d) { return ((d.radius * 2.5) + 4); })
-      .style("fill", function(d) {  return 'rgba(2,2,2,.7)' })
+      .style("fill", function(d) {  return 'rgba(255,255,255,.9)' })
       .attr("charge", -500)
       .attr("dy", ".35em")
       .text(function(d) { return (d.name).replace(/^(.*[\\\/])/g,''); }); //Keep only the name after the trailing slash
 
+  // Render the ForceBundling visulisation
+  function invokeForceBundling() {
+    // We can't work directly from the data, and must generate a new marker ID object from the original data
+    var graphLinksNew = new Array(graph.links.length);
+    for (i=0;i<graph.links.length;i++) {
+      graphLinksNew[i] = { 'source' : Object.assign(graph.links[i].source.index),
+                           'target' : Object.assign(graph.links[i].target.index)
+                         };
+    }
 
-  // node.append("image")
-  //     .attr("xlink:href", "https://github.com/favicon.ico")
-  //     .attr("x", -8)
-  //     .attr("y", -8)
-  //     .attr("width", 16)
-  //     .attr("height", 16);
+    var forceBundleInstantiation = d3.ForceEdgeBundling().step_size(0.1).nodes(nodes).edges(graphLinksNew);
+    var results = forceBundleInstantiation();
 
-//       .data(graph.nodes)
-//     .enter().append("circle")
-//       .attr("class", "node")
-//       .attr("r", 5)
-//       .style("fill", function(d) { console.log('trace: ' + d.name); return color(d.group);        
-// })
-//       .call(force.drag);
+    // Purge the old geometry
+    d3.selectAll("line").remove();
+    d3.selectAll("path").remove();
+    d3.selectAll("polygon").remove();
 
-  // node.append("circle")
-  //   .attr("class", "node")
-  //   .attr("r", 20);
+    // Unfortunately, ForceBundle does not retaint the metada
+    // about the "value" of the line, so we 
+    // use the target IDs to lookuo the thickness of the line 
+    // from the original Force data
+    function findConnectionInfo(sourceID,targetID) {
+      for(var i = 0; i < graph.links.length; i++){
+        if (graph.links[i].source.index == sourceID && graph.links[i].target.index == targetID) {
+          return graph.links[i];
+        }
+      }
+    }
 
-  // node.append("text")
-  //    .attr("text-anchor", "middle")
-  //    .text(function(d) {
-  //      return d.name;
-  //     });
+    // calculate the lines
+    var d3line = d3.svg.line()
+      .x(function(d){return d.x;})
+      .y(function(d){return d.y;})
+      .interpolate("linear");
+    
+    //plot the data
+    for (var i = 0; i < results.length; i++) {
+      var parentNode = results[i][results[i].length-1];
+      var parentConnection = findConnectionInfo(results[i][0].index,results[i][results[i].length-1].index);
 
-    // node.x = 50;
-    // console.log(node[0].length);
-    //     for ( y = 0; y < node[0].length; y++ ) {
-    //       console.log(node[0][y].x);
-    // node[0][y].attr("transform", function(d) {
-    //   console.log(d.x);
-    //   return "translate(50,50)";
-    // });
+      // svg.insertBefore("path",svg).attr("d", d3line(results[i]))
+      svgInner.insert("path",':first-child').attr("d", d3line(results[i]))
+        .style("stroke-width", function(d) {  return (parentConnection.value * 2) + .3 })
+        .style("stroke", function() {  return 'rgba('+hexToRgb(color(nodes[parentNode.index].group))+',.85)'; })
+        .attr("class", function(d) {  return "link-"+(parentConnection.value) * 100 })
+        .style("fill", "none")
+        .style('stroke-opacity',0.25);
+    }
 
-    //             // node[y].fixed = true;
-    //             node[0][y].x = 50;
-    //             node[0][y].y = 50;
-    //             node[0][y].px = 50;
-    //             node[0][y].py = 50;
-    //     }
+    node.append('svg:polygon')
+      .attr('points', function(d)  { return scaleMarker(d); })
+      .style("fill", function(d)   { return 'rgba(50,50,50,1)';  })
+      .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
+      // .attr('stroke', function(d,i) { return color(i)})
+      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius); })
+      .on("mousedown", function(d){ renderConnectionTable(d);        svg.on('.zoom', null ); })            
+      .on("mouseup", function(d){ zoomEnable(); })            
+      .on("mousemove", function(){  return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(d){  connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); }); 
 
+  }
 
+  // Set up zoom support
+  function zoomEnable() {
+    var zoom = d3.behavior.zoom()
+          .scaleExtent([1, 8])
+          .on("zoom", function() {
+          svgInner.attr("transform", "translate(" + d3.event.translate + ")" +
+                                    "scale(" + d3.event.scale + ")");
+          });
+    svg.call(zoom);
+  }
+
+  zoomEnable();
+
+  // tick tick, the engine that plots the D3 Force layout
   force.on("tick", tickFunction);
 
-  // Scale the marker according to it's importance
+  var tickCount = 0; // cap the number of tick runs
+ 
+  function tickFunction() {
+    tickCount++;
+    if (tickCount > 200) { 
+      force.stop();
+      tickCount = 180; // so we can restart after a marker is moved
+      invokeForceBundling(); // draw the new ForceBundle data
+    }
+
+    // invokeForceBundling();
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node.attr("transform", function(d) {
+      return "translate(" + d.x + "," + d.y + ")";
+    });
+  }
+
+  /* BEGIN 
+   * Utility functions...
+   */
+
+  // Scale the SVG marker according to it's importance
   function scaleMarker (d) {
-    var pointScale = ( (d.radius + 3) * Math.log(d.radius/.4 + 14) ) / 50;
+    var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
     // console.log(pointScale);
     var toReturn = '';
 
@@ -358,9 +366,7 @@ d3.json("content-model.json", function(error, graph) {
       toReturn += ',';
       toReturn += tempMarkerPoint[1] * pointScale;
       toReturn += ' ';
-
     }
-
 
     return toReturn;
   }
@@ -375,17 +381,6 @@ d3.json("content-model.json", function(error, graph) {
         // tempData[y].style("strokeOpacity", function(d) { return '0'; });
       }
     }
-
-    // var tempCircles = d3.selectAll("circle")[0];
-    // for ( x = 0; x < tempLines.length; x++ ) {
-    //   // console.log(tempData[y].__data__);
-    //   if ((tempCircles[x].__data__.group != d.group)) {
-    //     d3.select(tempCircles[x]).transition().style("opacity", 0);
-    //     // tempData[y].style("strokeOpacity", function(d) { return '0'; });
-    //   }
-    // }
-
-
   }
 
   // Reset the highlight on mouse out
@@ -395,68 +390,56 @@ d3.json("content-model.json", function(error, graph) {
       d3.select(tempLines[y]).transition().style("opacity", 1);
     }
   }
- 
-  function tickFunction() {
-    link.attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
 
-    // link.attr("d", function(d) {
-    //   return "M" + d[0].x + "," + d[0].y
-    //       + "S" + d[1].x + "," + d[1].y
-    //       + " " + d[2].x + "," + d[2].y;
-    // });
-    node.attr("transform", function(d) {
-      // if (d.name != ' /elixir ') {
-        return "translate(" + d.x + "," + d.y + ")";
-      // }
-    });
+  // shade the spheres according to some metric/goal
+  function coloriseSphere() {
+
+    // for now, we fake it to select on of 10...
+    switch( Math.floor((Math.random() * 10) + 1) ) {
+      case 1:
+        return 'rgba(213, 60, 60,.8)';
+      case 2:
+        return 'rgba(213, 60, 60,.8)';
+      // case 3:
+      //   return 'rgba(48, 171, 48,.8)';
+      default:
+        return 'rgba(255,255,255,.9)';
+    }
   }
+
+  $('svg').mousedown( function(){ 
+    closeConnectionTable();
+  });  
+
+  function renderConnectionTable(d) {
+    $('.node-information').fadeIn();
+
+    var requestedContentModel = d.name.trim();
+    history.pushState(null, null, '#'+requestedContentModel);
+
+    // Fetch the associated core content description in a really crude fashion :P
+    $.get('/content_model_viewer/index.html').then(function(responseData) { 
+      // $('.node-information').html('');
+      $('.node-information').html('<div class="close">X</div>' + responseData); // add a "close" button
+      $('.node-information .close').click( function(){ 
+        closeConnectionTable();
+      });
+    });
+
+  }
+
+  function closeConnectionTable() {
+    if ($('.node-information').css('opacity') == 1) {
+      $('.node-information').fadeOut();
+    }  
+  }
+
+  function hexToRgb(hex) {
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) : null;
+  }
+
 });
-
-// shade the spheres according to some metric/goal
-function coloriseSphere() {
-
-  // for now, we fake it to select on of 10...
-  switch( Math.floor((Math.random() * 10) + 1) ) {
-    case 1:
-      return 'rgba(213, 60, 60,.8)';
-    case 2:
-      return 'rgba(213, 60, 60,.8)';
-    // case 3:
-    //   return 'rgba(48, 171, 48,.8)';
-    default:
-      return 'rgba(255,255,255,.9)';
-  }
-}
-
-$('svg').mousedown( function(){ 
-  closeConnectionTable();
-});  
-
-function renderConnectionTable() {
-  // $('.node-information').fadeIn();
-  
-  $.get('/content_model_viewer/index.html#/events/seminars?1').then(function(responseData) { 
-    $('.node-information').html('<div class="close">X</div>' + responseData);
-    $('.node-information .close').click( function(){ 
-      closeConnectionTable();
-    });
-  });
-
-}
-
-function closeConnectionTable() {
-  if ($('.node-information').css('opacity') == 1) {
-    $('.node-information').fadeOut();
-  }  
-}
-
-function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) : null;
-}
 
 
 </script>
