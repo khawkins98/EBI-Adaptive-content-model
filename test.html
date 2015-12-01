@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script type="text/javascript" src="/content_model_viewer/resources/jquery.js"></script>
+
+
+
+
+<style>
+
+body {
+  background: rgb(255,255,255);
+  /*background: rgb(25,25,25);*/
+  margin: 0;
+
+}
+body svg,
+body .tooltip {
+  font: 9px verdana, sans-serif;
+}
+.link-5 {
+  fill: none;
+  stroke: #000;
+  stroke-dasharray: 1px 2px;
+  stroke-opacity: .5;
+  stroke-width: .9px;
+}
+.link-50 {
+  fill: none;
+  stroke: #666;
+  stroke-opacity: .7;
+  stroke-width: .7px;
+}
+
+.node circle:hover {
+  cursor: pointer;
+  opacity: .8;
+}
+
+.node circle.area-circle:hover {
+  cursor: -moz-grab; cursor: -webkit-grab; 
+}
+
+.node text {
+  pointer-events: none;
+  position: relative;
+  z-index: 100;
+  color: #444;
+  text-shadow:
+   -1px -1px .1px #fff,  
+    1px -1px .1px #fff,
+    -1px 1px .1px #fff,
+     1px 1px .1px #fff;
+  text-transform: uppercase;
+}
+
+h4 {
+  margin: 0;
+  text-transform: uppercase;
+  font-weight: normal;
+}
+.tooltip {
+  color: #fff;
+  background: #777;
+  padding: .5em;
+}
+
+.node-information { 
+  width: 80%;
+  background: #fff;
+  position: fixed;
+  z-index: 100;
+  display: none;
+  margin: 8vw 9%;
+  padding: 1vw 1%;
+  border: 1px solid rgba(0,0,0,.5);
+}
+
+</style>
+<body>
+<script src="/content-links/d3-master/d3.min.js"></script>
+<script src="/content-links/d3-master/lib/colorbrewer/colorbrewer.js"></script>
+<style src="/content-links/d3-master/lib/colorbrewer/colorbrewer.css"></style>
+<div class="node-information"></div>
+
+<script>
+
+// to do: experiment with specific force links: http://bl.ocks.org/sathomas/774d02a21dc1c714def8
+
+// force layout settings https://github.com/mbostock/d3/wiki/Force-Layout#friction
+
+var width = window.innerWidth-15,
+    height = window.innerHeight-15;
+ 
+// var color = d3.scale.category20c();
+var color = d3.scale.ordinal()
+    // .domain(d3.range(10))
+    .range(colorbrewer.Paired[9]);
+    // http://bl.ocks.org/mhkeller/10504471
+
+// info on force graphing
+// http://bl.ocks.org/sathomas/1ca23ee9588580d768aa
+var force = d3.layout.force()
+    .linkDistance(function(node) {
+      return 30;
+      // return ((Math.abs(node.value) * Math.abs(node.value)) * 3) + 100;
+    })
+    .gravity(0.025)
+    .charge(function(node) {
+      // console.log(Math.abs(node.radius));
+      // return '-10';
+       return '-' + ( ((Math.abs(node.radius) * Math.abs(node.radius)) * 3) + 140 );
+    })
+    .linkStrength(function(node) {
+       return node.value * .5;
+    })
+    // .alpha(-.1)
+    // .friction(.5)
+    .size([width, height]);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height);
+
+//tooltip
+var tooltip = d3.select("body")
+  .append("div")
+  .attr('class','tooltip')
+  .style("position", "absolute")
+  .style("z-index", "10")
+  .style("visibility", "hidden")
+  .html("<a href='#'>a simple tooltip</a>");
+
+
+d3.json("content-model.json", function(error, graph) {
+  if (error) console.log(error,graph);
+
+  var nodes = graph.nodes.slice(),
+      links = [],
+      bilinks = [];
+
+  // graph.links.forEach(function(link) {
+  //   var s = nodes[link.source],
+  //       t = nodes[link.target],
+  //       i = {}; // intermediate node
+  //   nodes.push(i);
+  //   links.push({source: s, target: i}, {source: i, target: t});
+  //   bilinks.push([s, i, t]);
+  // });
+
+  force
+      .nodes(nodes)
+      .links(graph.links);
+      // .start();
+
+  // afix the first to the center
+  
+  // Assign variables to the position of each item in the array.
+  // It is equal to the "Row" column from the google doc minus 1 (1 = 0)
+  // https://docs.google.com/spreadsheets/d/1yikAVpZo4nXy7TZkHP7bDHCCOKs_mGsLUH-BwReFsK0/edit#gid=0
+  var nodeEMBL = 21, 
+      nodeRESEARCH = 2,
+      nodeServices = 1,
+      nodeTraining = 3,
+      nodeNews = 7,
+      nodeAbout = 4,
+      nodeIntranet = 27,
+      nodeELIXIR = 6,
+      nodeSources = 55,
+      nodeExits = 56,
+      nodeIndustry = 5;
+
+  nodes[0].fixed = true; //front
+  nodes[0].x = width*.5;
+  nodes[0].y = height*.25;
+  // console.log(nodes[0].name);
+
+  nodes[nodeIndustry].fixed = true;
+  nodes[nodeIndustry].x = width*.35;
+  nodes[nodeIndustry].y = height*.75;
+  
+  nodes[nodeEMBL].fixed = true;
+  nodes[nodeEMBL].x = width*.85;
+  nodes[nodeEMBL].y = height*.2;
+  
+  nodes[nodeELIXIR].fixed = true;
+  nodes[nodeELIXIR].x = width*.32;
+  nodes[nodeELIXIR].y = height*.9;
+
+  nodes[nodeRESEARCH].fixed = true;
+  nodes[nodeRESEARCH].x = width*.85;
+  nodes[nodeRESEARCH].y = height*.45;
+
+  nodes[nodeServices].fixed = true;
+  nodes[nodeServices].x = width*.15;
+  nodes[nodeServices].y = height*.55;
+
+  nodes[nodeTraining].fixed = true;
+  nodes[nodeTraining].x = width*.15;
+  nodes[nodeTraining].y = height*.3;
+  
+  nodes[nodeAbout].fixed = true;
+  nodes[nodeAbout].x = width*.5;
+  nodes[nodeAbout].y = height*.35;
+  
+  nodes[nodeNews].fixed = true;
+  nodes[nodeNews].x = width*.5;
+  nodes[nodeNews].y = height*.8;
+  
+  nodes[nodeIntranet].fixed = true;
+  nodes[nodeIntranet].x = width*.75;
+  nodes[nodeIntranet].y = height*.1;
+
+  nodes[nodeSources].fixed = true;
+  nodes[nodeSources].x = width*.1;
+  nodes[nodeSources].y = height*.1;
+  nodes[nodeExits].fixed = true;
+  nodes[nodeExits].x = width*.9;
+  nodes[nodeExits].y = height*.1;
+
+  force.start();
+
+
+  var link = svg.selectAll(".link")
+    .data(graph.links)
+    .enter().append("line")
+      // .attr("link-strength", function(d) {  return ((d.value) * 10) })
+      // .attr("link-distance", function(d) {  return ((d.value) * 10 ) })
+      // .attr("charge", (function(d) { 
+      //   var chargeTemp = Math.pow(d.value*10,6);
+      //   // console.log(d.value, chargeTemp); 
+      //   return ("-"+chargeTemp);
+      // }))
+      .style("stroke", function(d) { return color(d.target.group); })
+      .attr("class", function(d) {  return "link-"+(d.value) * 100 });
+      // .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+
+//   var node = svg.selectAll(".node")
+//       .data(graph.nodes)
+//     .enter().append("circle")
+//       .attr("class", "node")
+//       .attr("r", 5)
+//       .style("fill", function(d) { console.log('trace: ' + d.name); return color(d.group);        
+// })
+//       .call(force.drag);
+  var node = svg.selectAll(".node")
+    .data(graph.nodes)
+    .enter().append("g")
+    // .attr("d.x", 250)
+    // .attr("d.y", 250)
+    .attr("class", "node")
+    // to enable interactivity
+    .call(force.drag);
+
+/*
+
+  // add the area circle
+  node.append("circle")
+      // .attr("class", "node")
+      .attr('class','area-circle')
+      // .attr("class", function(d) { return "node-" + (d.name).replace(/^(.*[\\\/])/g,''); })
+      .attr("r", function(d) {  return (d.radius + 3) * Math.log(d.radius/.7 + 10) })
+      .style("fill", function(d) {   return 'rgba('+hexToRgb(color(d.group))+',.95)'; })
+      .style("stroke", function(d) {   return 'rgba(0,0,0,.95)'; })
+      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius); })
+      .on("mousedown", function(d){  renderConnectionTable(); })            
+      .on("mousemove", function(){   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(d){    connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); }); 
+      // oy, we're adding the tooltip twice, work on this ...
+
+      */
+
+  // add the smaller marker circle 
+  node.append("circle")
+      .attr("class", "node-core")
+      // .attr("class", function(d) { return "node-" + (d.name).replace(/^(.*[\\\/])/g,''); })
+      .attr("r", function(d) {  return 3; })
+      .on("click", function(d){  window.open('http://www.ebi.ac.uk'+d.name.trim(),'_blank'); })
+      // .style("stroke", function(d) {  return coloriseSphere(); })
+      // .style("fill", function(d) {  return color(d.group);  })
+      .style("fill", function(d) {  return coloriseSphere(); });
+
+
+  node.append('svg:polygon')
+      .attr('points', function(d){ return scaleMarker(d); })
+      .style("fill", function(d) {  return 'rgba('+hexToRgb(color(d.group))+',.95)'; })
+      .style("stroke", function(d) {   return 'rgba(0,0,0,.95)'; })
+      // .attr('stroke', function(d,i) { return color(i)})
+      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius); })
+      .on("mousedown", function(d){  renderConnectionTable(); })            
+      .on("mousemove", function(){   return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(d){    connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); }); 
+
+  node.append("text")
+      .attr("dx", function(d) { console.log(d); return 8 + d.radius * 2.4; })
+      // .attr("dx", function(d) { return ((d.radius * 2.5) + 4); })
+      .style("fill", function(d) {  return 'rgba(2,2,2,.7)' })
+      .attr("charge", -500)
+      .attr("dy", ".35em")
+      .text(function(d) { return (d.name).replace(/^(.*[\\\/])/g,''); }); //Keep only the name after the trailing slash
+
+
+  // node.append("image")
+  //     .attr("xlink:href", "https://github.com/favicon.ico")
+  //     .attr("x", -8)
+  //     .attr("y", -8)
+  //     .attr("width", 16)
+  //     .attr("height", 16);
+
+//       .data(graph.nodes)
+//     .enter().append("circle")
+//       .attr("class", "node")
+//       .attr("r", 5)
+//       .style("fill", function(d) { console.log('trace: ' + d.name); return color(d.group);        
+// })
+//       .call(force.drag);
+
+  // node.append("circle")
+  //   .attr("class", "node")
+  //   .attr("r", 20);
+
+  // node.append("text")
+  //    .attr("text-anchor", "middle")
+  //    .text(function(d) {
+  //      return d.name;
+  //     });
+
+    // node.x = 50;
+    // console.log(node[0].length);
+    //     for ( y = 0; y < node[0].length; y++ ) {
+    //       console.log(node[0][y].x);
+    // node[0][y].attr("transform", function(d) {
+    //   console.log(d.x);
+    //   return "translate(50,50)";
+    // });
+
+    //             // node[y].fixed = true;
+    //             node[0][y].x = 50;
+    //             node[0][y].y = 50;
+    //             node[0][y].px = 50;
+    //             node[0][y].py = 50;
+    //     }
+
+
+  force.on("tick", tickFunction);
+
+  // Scale the marker according to it's importance
+  function scaleMarker (d) {
+    var pointScale = ( (d.radius + 3) * Math.log(d.radius/.4 + 14) ) / 50;
+    // console.log(pointScale);
+    var toReturn = '';
+
+    var markerArray = '-28.1,-16.2 0,-32.4 28.1,-16.2 28.1,16.2 0,32.4 -28.1,16.2'.split(' '); //embl poloygon
+
+    for (x=0;x<markerArray.length;x++) {
+      var tempMarkerPoint = markerArray[x].split(','); 
+      toReturn += tempMarkerPoint[0] * pointScale;
+      toReturn += ',';
+      toReturn += tempMarkerPoint[1] * pointScale;
+      toReturn += ' ';
+
+    }
+
+
+    return toReturn;
+  }
+
+  // Highlight the connected nodes on hvoer of a node
+  function connectionHighlight(d) {
+    var tempLines = d3.selectAll("line")[0];
+    for ( y = 0; y < tempLines.length; y++ ) {
+      // console.log(tempData[y].__data__);
+      if ((tempLines[y].__data__.source.group != d.group) && (tempLines[y].__data__.target.group != d.group)) {
+        d3.select(tempLines[y]).transition().style("opacity", 0);
+        // tempData[y].style("strokeOpacity", function(d) { return '0'; });
+      }
+    }
+
+    // var tempCircles = d3.selectAll("circle")[0];
+    // for ( x = 0; x < tempLines.length; x++ ) {
+    //   // console.log(tempData[y].__data__);
+    //   if ((tempCircles[x].__data__.group != d.group)) {
+    //     d3.select(tempCircles[x]).transition().style("opacity", 0);
+    //     // tempData[y].style("strokeOpacity", function(d) { return '0'; });
+    //   }
+    // }
+
+
+  }
+
+  // Reset the highlight on mouse out
+  function connectionHighlightReset(d) {
+    var tempLines = d3.selectAll("line")[0];
+    for ( y = 0; y < tempLines.length; y++ ) {
+      d3.select(tempLines[y]).transition().style("opacity", 1);
+    }
+  }
+ 
+  function tickFunction() {
+    link.attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    // link.attr("d", function(d) {
+    //   return "M" + d[0].x + "," + d[0].y
+    //       + "S" + d[1].x + "," + d[1].y
+    //       + " " + d[2].x + "," + d[2].y;
+    // });
+    node.attr("transform", function(d) {
+      // if (d.name != ' /elixir ') {
+        return "translate(" + d.x + "," + d.y + ")";
+      // }
+    });
+  }
+});
+
+// shade the spheres according to some metric/goal
+function coloriseSphere() {
+
+  // for now, we fake it to select on of 10...
+  switch( Math.floor((Math.random() * 10) + 1) ) {
+    case 1:
+      return 'rgba(213, 60, 60,.8)';
+    case 2:
+      return 'rgba(213, 60, 60,.8)';
+    // case 3:
+    //   return 'rgba(48, 171, 48,.8)';
+    default:
+      return 'rgba(255,255,255,.9)';
+  }
+}
+
+$('svg').mousedown( function(){ 
+  closeConnectionTable();
+});  
+
+function renderConnectionTable() {
+  // $('.node-information').fadeIn();
+  
+  $.get('/content_model_viewer/index.html#/events/seminars?1').then(function(responseData) { 
+    $('.node-information').html('<div class="close">X</div>' + responseData);
+    $('.node-information .close').click( function(){ 
+      closeConnectionTable();
+    });
+  });
+
+}
+
+function closeConnectionTable() {
+  if ($('.node-information').css('opacity') == 1) {
+    $('.node-information').fadeOut();
+  }  
+}
+
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) : null;
+}
+
+
+</script>
+
+</body>
