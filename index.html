@@ -95,8 +95,8 @@ h4 {
 // force layout settings https://github.com/mbostock/d3/wiki/Force-Layout#friction
 
 // set the vis size
-var width = window.innerWidth-15,
-    height = window.innerHeight-15;
+var width = window.innerWidth,
+    height = window.innerHeight;
 
 // set the colors we wish to use
 var color = d3.scale.ordinal()
@@ -127,6 +127,40 @@ var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 var svgInner = svg.append("g");
+
+
+// Intro animation
+var boxTop = svg.append("rect")
+              .attr('class','boxTop')
+              .attr("x", width + 20)
+              .attr("y", 0)
+              .attr("width", 50)
+              .attr("height", 100)
+              .style("fill", function(d) {  return 'rgba(255,255,255,.9)' });
+
+boxTop.transition()
+              .duration(1000)
+              .delay(100)
+              .each(animateIntro);
+
+function animateIntro() {
+    var target = d3.select(this);
+    target = target.transition()
+        .attr("x", 0)
+        .attr("width",300)
+      .transition()
+        .attr("width",300)
+        .attr("x", width);
+        // .each("end", repeat);
+
+    target.transition()
+              .attr("x",820)
+              .style("fill", function(d) {  return 'rgba(255,255,255,.0)' })
+              .duration(1000)
+              .attr("width",100)
+              .delay(1000);
+}              
+
 
 // Append the tooltip
 var tooltip = d3.select("body")
