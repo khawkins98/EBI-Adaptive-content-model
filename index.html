@@ -132,11 +132,11 @@ var svgInner = svg.append("g");
 // Intro animation
 var boxTop = svg.append("rect")
               .attr('class','boxTop')
-              .attr("x", width + 20)
-              .attr("y", 0)
+              .attr("x", width + 100)
+               .attr("y", 100)
               .attr("width", 50)
-              .attr("height", 100)
-              .style("fill", function(d) {  return 'rgba(255,255,255,.9)' });
+              .attr("height", height - 200)
+              .style("fill", function(d) {  return 'rgba(0,0,0,.3)' });
 
 boxTop.transition()
               .duration(1000)
@@ -146,19 +146,25 @@ boxTop.transition()
 function animateIntro() {
     var target = d3.select(this);
     target = target.transition()
+        .attr("y", 0)
+        .attr("height", height)
         .attr("x", 0)
         .attr("width",300)
       .transition()
-        .attr("width",300)
-        .attr("x", width);
+        .attr("y", 0)
+        .attr("height", height)
+        .style("fill", function(d) {  return 'rgba(0,0,0,.5)' })
+        .attr("width",width)
+        .attr("x", 0)
+        .remove();
         // .each("end", repeat);
 
-    target.transition()
-              .attr("x",820)
-              .style("fill", function(d) {  return 'rgba(255,255,255,.0)' })
-              .duration(1000)
-              .attr("width",100)
-              .delay(1000);
+    // target.transition()
+    //           .attr("x",820)
+    //           .style("fill", function(d) {  return 'rgba(255,255,255,.0)' })
+    //           .duration(1000)
+    //           .attr("width",100)
+    //           .delay(1000);
 }              
 
 
