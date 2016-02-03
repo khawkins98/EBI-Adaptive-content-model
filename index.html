@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
-<script type="text/javascript" src="/content_model_viewer/resources/jquery.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="vendor/ForceBundle/d3-ForceEdgeBundling.js"></script>
+<script src="vendor/colorbrewer/colorbrewer.js"></script>
+<style src="vendor/colorbrewer/colorbrewer.css"></style>
 
 <style>
 
@@ -17,15 +21,15 @@ body .tooltip {
 .link-5 {
   fill: none;
   stroke: #000;
-  /*stroke-dasharray: 1px 2px;*/
-  stroke-opacity: .5;
-  stroke-width: .9px;
+  stroke-dasharray: 2px 2px;
+  stroke-opacity: .4;
+  stroke-width: .8px;
 }
 .link-50 {
   fill: none;
   stroke: #666;
-  stroke-opacity: .7;
-  stroke-width: .7px;
+  stroke-opacity: .4;
+  stroke-width: .9px;
 }
 
 .node circle:hover {
@@ -72,12 +76,9 @@ h4 {
   border: 1px solid rgba(0,0,0,.5);
 }
 
+
 </style>
 <body>
-<script src="/content-links/d3-master/d3.min.js"></script>
-<script type="text/javascript" src="/content-links/ForceBundle/d3-ForceEdgeBundling.js"></script>
-<script src="/content-links/d3-master/lib/colorbrewer/colorbrewer.js"></script>
-<style src="/content-links/d3-master/lib/colorbrewer/colorbrewer.css"></style>
 
 <div class="node-information"></div>
 
@@ -140,10 +141,9 @@ var tooltip = d3.select("body")
 d3.json("content-model.json", function(error, graph) {
   if (error) console.log(error,graph);
 
-var nodes = graph.nodes.slice(),
-    links = [],
-    bilinks = [];
-
+  var nodes = graph.nodes.slice(),
+      links = [],
+      bilinks = [];
 
   // Setup the force direction graph
   force
@@ -152,7 +152,6 @@ var nodes = graph.nodes.slice(),
       // .start();
 
   // Position certain points
-  
   // Assign variables to the position of each item in the array.
   // It is equal to the "Row" column from the google doc minus 1 (1 = 0)
   // https://docs.google.com/spreadsheets/d/1yikAVpZo4nXy7TZkHP7bDHCCOKs_mGsLUH-BwReFsK0/edit#gid=0
@@ -165,6 +164,7 @@ var nodes = graph.nodes.slice(),
       nodeIntranet = 27,
       nodeELIXIR = 6,
       nodeSources = 55,
+      nodePeople = 47,
       nodeExits = 56,
       nodeIndustry = 5;
 
@@ -173,13 +173,19 @@ var nodes = graph.nodes.slice(),
   nodes[0].y = height*.25;
   // console.log(nodes[0].name);
 
+  // console.log(nodes);
+
   nodes[nodeIndustry].fixed = true;
   nodes[nodeIndustry].x = width*.35;
   nodes[nodeIndustry].y = height*.75;
   
   nodes[nodeEMBL].fixed = true;
   nodes[nodeEMBL].x = width*.85;
-  nodes[nodeEMBL].y = height*.2;
+  nodes[nodeEMBL].y = height*.7;
+  
+  nodes[nodePeople].fixed = true;
+  nodes[nodePeople].x = width*.6;
+  nodes[nodePeople].y = height*.2;
   
   nodes[nodeELIXIR].fixed = true;
   nodes[nodeELIXIR].x = width*.32;
@@ -238,7 +244,6 @@ var nodes = graph.nodes.slice(),
       .attr("class", function(d) {  return "link-"+(d.value) * 100 })
       .style("stroke-width", function(d) { return "0.1"; });
 
-
     node
       .append('text')
       .attr("dx", function(d) { return 8 + d.radius * 1.4; })
@@ -291,19 +296,20 @@ var nodes = graph.nodes.slice(),
 
       // svg.insertBefore("path",svg).attr("d", d3line(results[i]))
       svgInner.insert("path",':first-child').attr("d", d3line(results[i]))
-        .style("stroke-width", function(d) {  return (parentConnection.value * 2) + .3 })
+        .style("stroke-width", function(d) {  return (parentConnection.value * 2) + .6 })
         .style("stroke", function() {  return 'rgba('+hexToRgb(color(nodes[parentNode.index].group))+',.85)'; })
         .attr("class", function(d) {  return "link-"+(parentConnection.value) * 100 })
-        .style("fill", "none")
-        .style('stroke-opacity',0.25);
+        .attr("data-parentnode", function(d) {  return parentNode.index; })
+        .style("fill", "none");
+        // .style('stroke-opacity',0.4);
     }
 
     node.append('svg:polygon')
       .attr('points', function(d)  { return scaleMarker(d); })
-      .style("fill", function(d)   { return 'rgba(50,50,50,1)';  })
+      .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(50,50,50,1)';  })
       .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
-      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius); })
+      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius + '<br/>Views: ' + d.traffic); })
       .on("mousedown", function(d){ renderConnectionTable(d);        svg.on('.zoom', null ); })            
       .on("mouseup", function(d){ zoomEnable(); })            
       .on("mousemove", function(){  return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
@@ -316,8 +322,13 @@ var nodes = graph.nodes.slice(),
     var zoom = d3.behavior.zoom()
           .scaleExtent([1, 8])
           .on("zoom", function() {
-          svgInner.attr("transform", "translate(" + d3.event.translate + ")" +
-                                    "scale(" + d3.event.scale + ")");
+            svgInner.attr("transform", "translate(" + d3.event.translate + ")" +
+                                      "scale(" + d3.event.scale + ")");
+
+            // darken the background as we zoom in or out
+            var backgoundRGBVal = Math.round(55 / d3.event.scale);
+            document.body.style.backgroundColor = 'rgb(' + backgoundRGBVal + ',' + backgoundRGBVal + ',' + backgoundRGBVal + ')';
+
           });
     svg.call(zoom);
   }
@@ -354,9 +365,24 @@ var nodes = graph.nodes.slice(),
 
   // Scale the SVG marker according to it's importance
   function scaleMarker (d) {
-    var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
-    // console.log(pointScale);
+    // var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
+
+    // weight
+    // var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
+
+    // traffic
+    if (d.traffic === null) {
+      var pointScale = .1;
+    } else {
+      var pointScale = Math.sqrt(Math.sqrt(d.traffic) * 1.5) / 50;
+    }
+    // pointScale = pointScale/ 10;
+
+
+    console.log(pointScale);
     var toReturn = '';
+
+    
 
     var markerArray = '-28.1,-16.2 0,-32.4 28.1,-16.2 28.1,16.2 0,32.4 -28.1,16.2'.split(' '); //embl poloygon
 
@@ -373,22 +399,29 @@ var nodes = graph.nodes.slice(),
 
   // Highlight the connected nodes on hvoer of a node
   function connectionHighlight(d) {
-    var tempLines = d3.selectAll("line")[0];
-    for ( y = 0; y < tempLines.length; y++ ) {
-      // console.log(tempData[y].__data__);
-      if ((tempLines[y].__data__.source.group != d.group) && (tempLines[y].__data__.target.group != d.group)) {
-        d3.select(tempLines[y]).transition().style("opacity", 0);
-        // tempData[y].style("strokeOpacity", function(d) { return '0'; });
-      }
-    }
+    // var tempLines = d3.selectAll("path")[0];
+    // d3.selectAll('path[data-parentnode="7"]').style("opacity", 0);
+
+    d3.selectAll('path').style("opacity",0);
+    d3.selectAll('path[data-parentnode="' + d.index + '"]').style("opacity",1);
+    // console.log('passed', d);
+    // data-parentnode
+    // for ( y = 0; y < tempLines.length; y++ ) {
+    //   console.log(tempLines[y]);
+    //   if ((tempLines[y].__data__.source.group != d.group) && (tempLines[y].__data__.target.group != d.group)) {
+    //     d3.select(tempLines[y]).transition().style("opacity", 0);
+    //     // tempData[y].style("strokeOpacity", function(d) { return '0'; });
+    //   }
+    // }
   }
 
   // Reset the highlight on mouse out
   function connectionHighlightReset(d) {
-    var tempLines = d3.selectAll("line")[0];
-    for ( y = 0; y < tempLines.length; y++ ) {
-      d3.select(tempLines[y]).transition().style("opacity", 1);
-    }
+    d3.selectAll('path').style("opacity",1);
+    // var tempLines = d3.selectAll("path")[0];
+    // for ( y = 0; y < tempLines.length; y++ ) {
+    //   d3.select(tempLines[y]).transition().style("opacity", 1);
+    // }
   }
 
   // shade the spheres according to some metric/goal
@@ -412,7 +445,7 @@ var nodes = graph.nodes.slice(),
   });  
 
   function renderConnectionTable(d) {
-    $('.node-information').fadeIn();
+    // $('.node-information').fadeIn();
 
     var requestedContentModel = d.name.trim();
     history.pushState(null, null, '#'+requestedContentModel);
@@ -440,8 +473,13 @@ var nodes = graph.nodes.slice(),
   }
 
 });
-
-
 </script>
+
+<!-- 
+  Handy pattern fills:
+  https://iros.github.io/patternfills/sample_d3.html
+  -->
+  <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg==" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>
+
 
 </body>
