@@ -141,16 +141,16 @@ var boxBack = svg.append("rect")
               .style("fill", function(d) {  return 'rgba(55,55,55,1)' });
 
 boxBack.transition()
-              .duration(1000)
+              .duration(1200)
               // .style("opacity", function(d) {  return '0' })
-              .delay(1300)
+              .delay(1500)
               .attr("x", width + 10)
               // .remove();
 
 var boxTop = svg.append("rect")
               .attr('class','boxTop')
               .attr("x", width + 100)
-               .attr("y", 100)
+              .attr("y", 100)
               .attr("width", 50)
               .attr("height", height - 200)
               .style("fill", function(d) {  return 'rgba(0,0,0,.3)' });
