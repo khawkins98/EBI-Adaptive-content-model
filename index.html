@@ -141,10 +141,11 @@ var boxBack = svg.append("rect")
               .style("fill", function(d) {  return 'rgba(55,55,55,1)' });
 
 boxBack.transition()
-              .duration(2000)
+              .duration(1000)
               // .style("opacity", function(d) {  return '0' })
-              .delay(100)
-              .remove();
+              .delay(1300)
+              .attr("x", width + 10)
+              // .remove();
 
 var boxTop = svg.append("rect")
               .attr('class','boxTop')
