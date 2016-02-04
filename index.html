@@ -138,7 +138,7 @@ var boxBack = svg.append("rect")
                .attr("y", 0)
               .attr("width", width)
               .attr("height", height)
-              .style("fill", function(d) {  return 'rgba(55,55,55,1)' });
+              .style("fill", function(d) {  return '#70BDBD' });
 
 boxBack.transition()
               .duration(1200)
@@ -153,7 +153,7 @@ var boxTop = svg.append("rect")
               .attr("y", 100)
               .attr("width", 50)
               .attr("height", height - 200)
-              .style("fill", function(d) {  return 'rgba(0,0,0,.3)' });
+              .style("fill", function(d) {  return 'rgba(255,255,255,.3)' });
 
 
 boxTop.transition()
@@ -171,7 +171,7 @@ function animateIntro() {
       .transition()
         .attr("y", 0)
         .attr("height", height)
-        .style("fill", function(d) {  return 'rgba(0,0,0,1)' })
+        .style("fill", function(d) {  return 'rgba(255,255,255,1)' })
         .attr("width",width)
         .attr("x", width);
         // .remove();
