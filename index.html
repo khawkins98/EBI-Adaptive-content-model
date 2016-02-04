@@ -130,6 +130,22 @@ var svgInner = svg.append("g");
 
 
 // Intro animation
+// for this animation we area masking the content while it loads
+// boxBack blocks, while boxTop provides a visual
+var boxBack = svg.append("rect")
+              .attr('class','boxBack')
+              .attr("x", 0)
+               .attr("y", 0)
+              .attr("width", width)
+              .attr("height", height)
+              .style("fill", function(d) {  return 'rgba(55,55,55,1)' });
+
+boxBack.transition()
+              .duration(2000)
+              // .style("opacity", function(d) {  return '0' })
+              .delay(100)
+              .remove();
+
 var boxTop = svg.append("rect")
               .attr('class','boxTop')
               .attr("x", width + 100)
@@ -137,6 +153,7 @@ var boxTop = svg.append("rect")
               .attr("width", 50)
               .attr("height", height - 200)
               .style("fill", function(d) {  return 'rgba(0,0,0,.3)' });
+
 
 boxTop.transition()
               .duration(1000)
@@ -153,10 +170,10 @@ function animateIntro() {
       .transition()
         .attr("y", 0)
         .attr("height", height)
-        .style("fill", function(d) {  return 'rgba(0,0,0,.5)' })
+        .style("fill", function(d) {  return 'rgba(0,0,0,1)' })
         .attr("width",width)
-        .attr("x", 0)
-        .remove();
+        .attr("x", width);
+        // .remove();
         // .each("end", repeat);
 
     // target.transition()
@@ -166,7 +183,6 @@ function animateIntro() {
     //           .attr("width",100)
     //           .delay(1000);
 }              
-
 
 // Append the tooltip
 var tooltip = d3.select("body")
