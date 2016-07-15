@@ -1,5 +1,17 @@
-<!DOCTYPE html>
-<meta charset="utf-8">
+---
+layout: default
+title: Project home
+group: "in_local_navigation"
+order: 1
+---
+<div class="blurb">
+	<h2><a href="{{ site.domain }}{{ site.baseurl }}">Hi there</a></h2>
+	<p>Fork this repo to get your Jekyll site up and running on GitHub Pages with the EBI Framework.</p>
+
+	<h3>Recent updates to this project</h3>
+	{% include update_list.html %}
+</div><!-- /.blurb -->
+
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 <script src="https://d3js.org/d3.v3.min.js"></script>
 <script type="text/javascript" src="vendor/ForceBundle/d3-ForceEdgeBundling.js"></script>
@@ -38,7 +50,7 @@ body .tooltip {
 }
 
 .node circle.area-circle:hover {
-  cursor: -moz-grab; cursor: -webkit-grab; 
+  cursor: -moz-grab; cursor: -webkit-grab;
 }
 
 .node text {
@@ -47,7 +59,7 @@ body .tooltip {
   z-index: 100;
   color: #FFF;
   text-shadow:
-   -1px -1px .1px #000,  
+   -1px -1px .1px #000,
     1px -1px .1px #000,
     -1px 1px .1px #000,
      1px 1px .1px #000;
@@ -65,7 +77,7 @@ h4 {
   padding: .5em;
 }
 
-.node-information { 
+.node-information {
   width: 80%;
   background: #fff;
   position: fixed;
@@ -78,8 +90,6 @@ h4 {
 
 
 </style>
-<body>
-
 <div class="node-information"></div>
 
 <script>
@@ -183,7 +193,7 @@ function animateIntro() {
     //           .duration(1000)
     //           .attr("width",100)
     //           .delay(1000);
-}              
+}
 
 // Append the tooltip
 var tooltip = d3.select("body")
@@ -212,7 +222,7 @@ d3.json("content-model.json", function(error, graph) {
   // Assign variables to the position of each item in the array.
   // It is equal to the "Row" column from the google doc minus 1 (1 = 0)
   // https://docs.google.com/spreadsheets/d/1yikAVpZo4nXy7TZkHP7bDHCCOKs_mGsLUH-BwReFsK0/edit#gid=0
-  var nodeEMBL = 21, 
+  var nodeEMBL = 21,
       nodeRESEARCH = 2,
       nodeServices = 1,
       nodeTraining = 3,
@@ -235,15 +245,15 @@ d3.json("content-model.json", function(error, graph) {
   nodes[nodeIndustry].fixed = true;
   nodes[nodeIndustry].x = width*.35;
   nodes[nodeIndustry].y = height*.75;
-  
+
   nodes[nodeEMBL].fixed = true;
   nodes[nodeEMBL].x = width*.85;
   nodes[nodeEMBL].y = height*.7;
-  
+
   nodes[nodePeople].fixed = true;
   nodes[nodePeople].x = width*.6;
   nodes[nodePeople].y = height*.2;
-  
+
   nodes[nodeELIXIR].fixed = true;
   nodes[nodeELIXIR].x = width*.32;
   nodes[nodeELIXIR].y = height*.9;
@@ -259,15 +269,15 @@ d3.json("content-model.json", function(error, graph) {
   nodes[nodeTraining].fixed = true;
   nodes[nodeTraining].x = width*.15;
   nodes[nodeTraining].y = height*.3;
-  
+
   nodes[nodeAbout].fixed = true;
   nodes[nodeAbout].x = width*.5;
   nodes[nodeAbout].y = height*.35;
-  
+
   nodes[nodeNews].fixed = true;
   nodes[nodeNews].x = width*.5;
   nodes[nodeNews].y = height*.8;
-  
+
   nodes[nodeIntranet].fixed = true;
   nodes[nodeIntranet].x = width*.75;
   nodes[nodeIntranet].y = height*.1;
@@ -278,7 +288,7 @@ d3.json("content-model.json", function(error, graph) {
   nodes[nodeExits].fixed = true;
   nodes[nodeExits].x = width*.9;
   nodes[nodeExits].y = height*.1;
-  
+
 
   // Start the force graph
   force.start();
@@ -329,8 +339,8 @@ d3.json("content-model.json", function(error, graph) {
     d3.selectAll("polygon").remove();
 
     // Unfortunately, ForceBundle does not retaint the metada
-    // about the "value" of the line, so we 
-    // use the target IDs to lookuo the thickness of the line 
+    // about the "value" of the line, so we
+    // use the target IDs to lookuo the thickness of the line
     // from the original Force data
     function findConnectionInfo(sourceID,targetID) {
       for(var i = 0; i < graph.links.length; i++){
@@ -345,7 +355,7 @@ d3.json("content-model.json", function(error, graph) {
       .x(function(d){return d.x;})
       .y(function(d){return d.y;})
       .interpolate("linear");
-    
+
     //plot the data
     for (var i = 0; i < results.length; i++) {
       var parentNode = results[i][results[i].length-1];
@@ -367,10 +377,10 @@ d3.json("content-model.json", function(error, graph) {
       .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
       .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius + '<br/>Views: ' + d.traffic); })
-      .on("mousedown", function(d){ renderConnectionTable(d);        svg.on('.zoom', null ); })            
-      .on("mouseup", function(d){ zoomEnable(); })            
+      .on("mousedown", function(d){ renderConnectionTable(d);        svg.on('.zoom', null ); })
+      .on("mouseup", function(d){ zoomEnable(); })
       .on("mousemove", function(){  return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){  connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); }); 
+      .on("mouseout", function(d){  connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); });
 
   }
 
@@ -396,10 +406,10 @@ d3.json("content-model.json", function(error, graph) {
   force.on("tick", tickFunction);
 
   var tickCount = 0; // cap the number of tick runs
- 
+
   function tickFunction() {
     tickCount++;
-    if (tickCount > 200) { 
+    if (tickCount > 200) {
       force.stop();
       tickCount = 180; // so we can restart after a marker is moved
       invokeForceBundling(); // draw the new ForceBundle data
@@ -416,7 +426,7 @@ d3.json("content-model.json", function(error, graph) {
     });
   }
 
-  /* BEGIN 
+  /* BEGIN
    * Utility functions...
    */
 
@@ -439,12 +449,12 @@ d3.json("content-model.json", function(error, graph) {
     console.log(pointScale);
     var toReturn = '';
 
-    
+
 
     var markerArray = '-28.1,-16.2 0,-32.4 28.1,-16.2 28.1,16.2 0,32.4 -28.1,16.2'.split(' '); //embl poloygon
 
     for (x=0;x<markerArray.length;x++) {
-      var tempMarkerPoint = markerArray[x].split(','); 
+      var tempMarkerPoint = markerArray[x].split(',');
       toReturn += tempMarkerPoint[0] * pointScale;
       toReturn += ',';
       toReturn += tempMarkerPoint[1] * pointScale;
@@ -497,9 +507,9 @@ d3.json("content-model.json", function(error, graph) {
     }
   }
 
-  $('svg').mousedown( function(){ 
+  $('svg').mousedown( function(){
     closeConnectionTable();
-  });  
+  });
 
   function renderConnectionTable(d) {
     // $('.node-information').fadeIn();
@@ -508,10 +518,10 @@ d3.json("content-model.json", function(error, graph) {
     history.pushState(null, null, '#'+requestedContentModel);
 
     // Fetch the associated core content description in a really crude fashion :P
-    $.get('/content_model_viewer/index.html').then(function(responseData) { 
+    $.get('/content_model_viewer/index.html').then(function(responseData) {
       // $('.node-information').html('');
       $('.node-information').html('<div class="close">X</div>' + responseData); // add a "close" button
-      $('.node-information .close').click( function(){ 
+      $('.node-information .close').click( function(){
         closeConnectionTable();
       });
     });
@@ -521,7 +531,7 @@ d3.json("content-model.json", function(error, graph) {
   function closeConnectionTable() {
     if ($('.node-information').css('opacity') == 1) {
       $('.node-information').fadeOut();
-    }  
+    }
   }
 
   function hexToRgb(hex) {
@@ -532,11 +542,8 @@ d3.json("content-model.json", function(error, graph) {
 });
 </script>
 
-<!-- 
+<!--
   Handy pattern fills:
   https://iros.github.io/patternfills/sample_d3.html
   -->
   <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg==" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>
-
-
-</body>
