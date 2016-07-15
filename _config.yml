@@ -1,9 +1,9 @@
 # Site settings
-name: EBI Jekyll Boilerplate
+name: EBI Adaptive Content Model
 group: EMBL-EBI Web Development
-email: noreply@ebi.ac.uk
-domain: //ebiwd.github.io
-baseurl: /EBI-Boilerplate-Jekyll
+email: khawkins@ebi.ac.uk
+domain: //khawkins98.github.io
+baseurl: /EBI-Adaptive-content-model
 permalink: pretty
 
 # Add custom CSS / JS here
