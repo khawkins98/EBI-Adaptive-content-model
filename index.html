@@ -56,6 +56,8 @@ body .tooltip {
     1px -1px .1px #000,
     -1px 1px .1px #000,
      1px 1px .1px #000;
+}
+.node text.group-1 {
   text-transform: uppercase;
 }
 
@@ -295,8 +297,32 @@ d3.json("data.json", function(error, graph) {
       }
 
     }
+  }
+
+
+  // Create parent page hirearchy
+  for (var i = 0; i < nodes.length; i++) {
+
+      var parentPages = nodes[i].title.split('/');
+
+      // Link top level page (/research, /training...) to www.ebi.ac.uk
+      if (parentPages.length == 2) {
+        // where is www.ebi.ac.uk?
+        deepestMatch = getParentPagePosition('/www.ebi.ac.uk',nodes,'title');
+        // console.log(deepestMatch);
+
+        // console.log(parentPages);
+        var newLink = new Object();
+        newLink.value = 0.5;
+        newLink.source = deepestMatch;
+        newLink.target = i;
+        graph.links.push(newLink);
+
+      }
+
 
   }
+
 
 
 
@@ -405,6 +431,7 @@ d3.json("data.json", function(error, graph) {
       .append('text')
       .attr("dx", function(d) { return 8 + d.radius * 1.4; })
       // .attr("dx", function(d) { return ((d.radius * 2.5) + 4); })
+      .attr("class", function(d) {  return "group-"+(d.group) })
       .style("fill", function(d) {  return 'rgba(255,255,255,.9)' })
       .attr("charge", -500)
       .attr("dy", ".35em")
