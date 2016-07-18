@@ -1,20 +1,22 @@
 ---
 layout: post
-title: "Research groups quick index"
-date: 2016-07-15
+title: "Upcoming events"
 parent-pages:
-- /research
-- /research/groups
-- /about/people
+- /www.ebi.ac.uk
+- /about/visit-us
+- /about/events
 users:
 - scientists new to EBI
 - scientists familiar with EBI
+- visitors
 goals:
-- Connect scientists
+- Connect users to upcoming events
+- Showcase the spectrum of activity at EBI
 priority: 2
 role:
 - navigation
 - informational
+- branding
 ---
 
 No further description.

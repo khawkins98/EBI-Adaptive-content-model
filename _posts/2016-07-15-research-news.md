@@ -7,6 +7,7 @@ parent-pages:
 - /research/publications
 - /research/groups
 - /research/groups/$team_name
+- /about/news
 users:
 - scientists new to EBI
 - scientists familiar with EBI

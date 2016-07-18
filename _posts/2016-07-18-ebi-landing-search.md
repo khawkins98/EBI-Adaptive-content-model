@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Full text on all research groups"
-date: 2016-07-15
+title: "Landing page search"
 parent-pages:
-- /research/groups
+- /www.ebi.ac.uk
 users:
 - scientists new to EBI
 - visitors
 goals:
-- Educate users on role on research at EBI
-priority: 5
+- Facilitate rapid searching
+- Educate on role of EBI search
+priority: 2
 role:
 - navigation
 - informational

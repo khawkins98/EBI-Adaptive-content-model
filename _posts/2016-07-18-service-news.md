@@ -1,20 +1,21 @@
 ---
 layout: post
-title: "Research groups quick index"
-date: 2016-07-15
+title: "Service news"
 parent-pages:
-- /research
-- /research/groups
-- /about/people
+- /about/news
+- /services
 users:
 - scientists new to EBI
 - scientists familiar with EBI
+- visitors
 goals:
-- Connect scientists
+- Connect users to recent updates to services
+- Showcase the spectrum of activity at EBI
 priority: 2
 role:
 - navigation
 - informational
+- branding
 ---
 
 No further description.

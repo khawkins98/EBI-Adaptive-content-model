@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Research overview text"
-date: 2016-07-15
+title: "EBI Landing page text"
 parent-pages:
-- /research
-- /research/groups
+- /www.ebi.ac.uk
 users:
 - scientists new to EBI
 - visitors
 goals:
-- Educate users on role on research at EBI
+- Educate on 'what the heck is this?'
+- Impress world class nature of EBI
 priority: 2
 role:
 - branding

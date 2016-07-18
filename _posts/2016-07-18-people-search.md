@@ -1,10 +1,7 @@
 ---
 layout: post
-title: "Research groups quick index"
-date: 2016-07-15
+title: "People search"
 parent-pages:
-- /research
-- /research/groups
 - /about/people
 users:
 - scientists new to EBI
