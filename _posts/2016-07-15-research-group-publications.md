@@ -3,7 +3,7 @@ layout: post
 title: "Research group publications"
 date: 2016-07-15
 parent-pages:
-- /research/$team_name
+- /research/groups/$team_name
 users:
 - scientists new to EBI
 - scientists familiar with EBI
