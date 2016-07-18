@@ -5,11 +5,19 @@ layout: null
   {% for post in site.posts %}
     {
       "title": "{{ post.title }}",
-      "Test": "{{post.parent-pages}}",
       "parent-pages":  "{% for parent-page in post.parent-pages %}{{ parent-page }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "users": "{% for user in post.users %}{{ user }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "goals": "{% for goal in post.goals %}{{ goal }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "url": "{{ post.url }}"
     }{% unless forloop.last %},{% endunless %}
   {% endfor %}
-]}
+],
+"links": [
+  {
+    "title": "Placeholder - this will be automatically generated in JS",
+    "source": 0,
+    "target": 1,
+    "value": 0.5
+  }
+]
+}
