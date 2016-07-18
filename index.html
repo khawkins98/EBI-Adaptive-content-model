@@ -198,12 +198,107 @@ var tooltip = d3.select("body")
   .html("<a href='#'>a simple tooltip</a>");
 
 // Load the data
-d3.json("content-model.json", function(error, graph) {
+// http://khawkins98.github.io/EBI-Adaptive-content-model/data.json
+// d3.json("content-model.json", function(error, graph) {
+d3.json("data.json", function(error, graph) {
   if (error) console.log(error,graph);
 
-  var nodes = graph.nodes.slice(),
+  var nodes = graph.nodes,
       links = [],
       bilinks = [];
+
+
+  // Utility method to find property by value
+  // We use this to see if we've already created a parent page
+  function getParentPagePosition(value,target) {
+    for (var i = 0; i < target.length; i++) {
+      if (target[i].title == value) {
+        // increment number of connections
+        target[i].radius++;
+
+        // return the pointer to the match
+        return i;
+      }
+    }
+
+    return 0;
+  }
+
+  // Process loaded JSON
+  // Set defaults and create parent pages
+  for (var i = 0; i < nodes.length; i++) {
+    nodes[i].radius = nodes[i].radius || 1; // default size
+    nodes[i].group  = nodes[i].group || 2; // 2 = content
+
+    // make new page objects from referenced items
+    if (nodes[i]['parent-pages'] != undefined) {
+      var pages = nodes[i]['parent-pages'].split(', ');
+      for (var i2 = 0; i2 < pages.length; i2++) {
+
+        // Does a parent page already exsist?
+        var parentPagePosition = getParentPagePosition(pages[i2],nodes,'title');
+        if (parentPagePosition == 0) {
+          // construct a new node
+          var newNode = new Object();
+          newNode.title = pages[i2];
+          newNode.radius = 1; // start at 1 and later we'll increment for every new link
+          newNode.group = 1; // 1 = page
+          // newNode.index = nodes.length + 1;
+          // newNode.px = Math.floor(Math.random() * 70);
+          // newNode.py = Math.floor(Math.random() * 70);
+          // newNode.x = Math.floor(Math.random() * 70);
+          // newNode.y = Math.floor(Math.random() * 70);
+          // newNode.weight = 0;
+
+          // add new node to master list
+          nodes.push(newNode);
+
+          parentPagePosition = nodes.length - 1;
+        }
+
+        // make a link between the parent page item and the child content item
+        var newLink = new Object();
+        newLink.value = 0.1;
+        newLink.source = parentPagePosition;
+        newLink.target = i;
+
+        graph.links.push(newLink);
+      }
+    }
+
+  }
+
+  // Create parent page hirearchy
+  for (var i = 0; i < nodes.length; i++) {
+
+    // make new page nodes by tallying referenced items
+    if (nodes[i].group == 1) {
+
+      var parentPages = nodes[i].title.split('/');
+      var pageToSearchFor = '';
+      var deepestMatch = 0; // track the best match
+      for (var i2 = 1; i2 < parentPages.length; i2++) {
+        pageToSearchFor = pageToSearchFor + '/' + parentPages[i2];
+        if (pageToSearchFor != nodes[i].title) { // don't link to self
+          deepestMatch = getParentPagePosition(pageToSearchFor,nodes,'title');
+          // console.log(nodes[i].title,pageToSearchFor,parentPagePosition);
+        }
+      }
+
+      // make affiliated link
+      if (deepestMatch != 0) {
+        var newLink = new Object();
+        newLink.value = 0.5;
+        newLink.source = deepestMatch;
+        newLink.target = i;
+        graph.links.push(newLink);
+      }
+
+    }
+
+  }
+
+
 
   // Setup the force direction graph
   force
@@ -215,18 +310,20 @@ d3.json("content-model.json", function(error, graph) {
   // Assign variables to the position of each item in the array.
   // It is equal to the "Row" column from the google doc minus 1 (1 = 0)
   // https://docs.google.com/spreadsheets/d/1yikAVpZo4nXy7TZkHP7bDHCCOKs_mGsLUH-BwReFsK0/edit#gid=0
-  var nodeEMBL = 21,
-      nodeRESEARCH = 2,
-      nodeServices = 1,
-      nodeTraining = 3,
-      nodeNews = 7,
-      nodeAbout = 4,
-      nodeIntranet = 27,
-      nodeELIXIR = 6,
-      nodeSources = 55,
-      nodePeople = 47,
-      nodeExits = 56,
-      nodeIndustry = 5;
+  // var nodeEMBL = 21,
+  //     nodeRESEARCH = 2,
+  //     nodeServices = 1,
+  //     nodeTraining = 3,
+  //     nodeNews = 7,
+  //     nodeAbout = 4,
+  //     nodeIntranet = 27,
+  //     nodeELIXIR = 6,
+  //     nodeSources = 55,
+  //     nodePeople = 47,
+  //     nodeExits = 56,
+  //     nodeIndustry = 5;
+
+      // console.log(nodes);
 
   nodes[0].fixed = true; //front
   nodes[0].x = width*.5;
@@ -235,52 +332,52 @@ d3.json("content-model.json", function(error, graph) {
 
   // console.log(nodes);
 
-  nodes[nodeIndustry].fixed = true;
-  nodes[nodeIndustry].x = width*.35;
-  nodes[nodeIndustry].y = height*.75;
+  // nodes[nodeIndustry].fixed = true;
+  // nodes[nodeIndustry].x = width*.35;
+  // nodes[nodeIndustry].y = height*.75;
 
-  nodes[nodeEMBL].fixed = true;
-  nodes[nodeEMBL].x = width*.85;
-  nodes[nodeEMBL].y = height*.7;
+  // nodes[nodeEMBL].fixed = true;
+  // nodes[nodeEMBL].x = width*.85;
+  // nodes[nodeEMBL].y = height*.7;
 
-  nodes[nodePeople].fixed = true;
-  nodes[nodePeople].x = width*.6;
-  nodes[nodePeople].y = height*.2;
+  // nodes[nodePeople].fixed = true;
+  // nodes[nodePeople].x = width*.6;
+  // nodes[nodePeople].y = height*.2;
 
-  nodes[nodeELIXIR].fixed = true;
-  nodes[nodeELIXIR].x = width*.32;
-  nodes[nodeELIXIR].y = height*.9;
+  // nodes[nodeELIXIR].fixed = true;
+  // nodes[nodeELIXIR].x = width*.32;
+  // nodes[nodeELIXIR].y = height*.9;
 
-  nodes[nodeRESEARCH].fixed = true;
-  nodes[nodeRESEARCH].x = width*.85;
-  nodes[nodeRESEARCH].y = height*.45;
+  // nodes[nodeRESEARCH].fixed = true;
+  // nodes[nodeRESEARCH].x = width*.85;
+  // nodes[nodeRESEARCH].y = height*.45;
 
-  nodes[nodeServices].fixed = true;
-  nodes[nodeServices].x = width*.15;
-  nodes[nodeServices].y = height*.55;
+  // nodes[nodeServices].fixed = true;
+  // nodes[nodeServices].x = width*.15;
+  // nodes[nodeServices].y = height*.55;
 
-  nodes[nodeTraining].fixed = true;
-  nodes[nodeTraining].x = width*.15;
-  nodes[nodeTraining].y = height*.3;
+  // nodes[nodeTraining].fixed = true;
+  // nodes[nodeTraining].x = width*.15;
+  // nodes[nodeTraining].y = height*.3;
 
-  nodes[nodeAbout].fixed = true;
-  nodes[nodeAbout].x = width*.5;
-  nodes[nodeAbout].y = height*.35;
+  // nodes[nodeAbout].fixed = true;
+  // nodes[nodeAbout].x = width*.5;
+  // nodes[nodeAbout].y = height*.35;
 
-  nodes[nodeNews].fixed = true;
-  nodes[nodeNews].x = width*.5;
-  nodes[nodeNews].y = height*.8;
+  // nodes[nodeNews].fixed = true;
+  // nodes[nodeNews].x = width*.5;
+  // nodes[nodeNews].y = height*.8;
 
-  nodes[nodeIntranet].fixed = true;
-  nodes[nodeIntranet].x = width*.75;
-  nodes[nodeIntranet].y = height*.1;
+  // nodes[nodeIntranet].fixed = true;
+  // nodes[nodeIntranet].x = width*.75;
+  // nodes[nodeIntranet].y = height*.1;
 
-  nodes[nodeSources].fixed = true;
-  nodes[nodeSources].x = width*.1;
-  nodes[nodeSources].y = height*.1;
-  nodes[nodeExits].fixed = true;
-  nodes[nodeExits].x = width*.9;
-  nodes[nodeExits].y = height*.1;
+  // nodes[nodeSources].fixed = true;
+  // nodes[nodeSources].x = width*.1;
+  // nodes[nodeSources].y = height*.1;
+  // nodes[nodeExits].fixed = true;
+  // nodes[nodeExits].x = width*.9;
+  // nodes[nodeExits].y = height*.1;
 
 
   // Start the force graph
@@ -288,7 +385,7 @@ d3.json("content-model.json", function(error, graph) {
 
   // Add basic SVG containers and allow them to be drug about
   var node = svgInner.selectAll(".node")
-    .data(graph.nodes)
+    .data(nodes)
     .enter().append("g")
     // .attr("d.x", 250)
     // .attr("d.y", 250)
@@ -311,19 +408,22 @@ d3.json("content-model.json", function(error, graph) {
       .style("fill", function(d) {  return 'rgba(255,255,255,.9)' })
       .attr("charge", -500)
       .attr("dy", ".35em")
-      .text(function(d) { return (d.name).replace(/^(.*[\\\/])/g,''); }); //Keep only the name after the trailing slash
+      .text(function(d) { return (d.title).replace(/^(.*[\\\/])/g,''); }); //Keep only the name after the trailing slash
+
+  // For force bundling can't work directly from the data,
+  // so we must generate a new marker ID object from the original data
+  var graphLinksNew = new Array(graph.links.length);
+  for (i=0;i<graph.links.length;i++) {
+    graphLinksNew[i] = { 'source' : graph.links[i].source.index,
+                         'target' : graph.links[i].target.index
+                       };
+  }
 
   // Render the ForceBundling visulisation
   function invokeForceBundling() {
-    // We can't work directly from the data, and must generate a new marker ID object from the original data
-    var graphLinksNew = new Array(graph.links.length);
-    for (i=0;i<graph.links.length;i++) {
-      graphLinksNew[i] = { 'source' : Object.assign(graph.links[i].source.index),
-                           'target' : Object.assign(graph.links[i].target.index)
-                         };
-    }
 
-    var forceBundleInstantiation = d3.ForceEdgeBundling().step_size(0.1).nodes(nodes).edges(graphLinksNew);
+    // invoke forcebundling only once
+    var forceBundleInstantiation = d3.ForceEdgeBundling().step_size(0.5).nodes(nodes).edges(graphLinksNew);
     var results = forceBundleInstantiation();
 
     // Purge the old geometry
@@ -331,7 +431,7 @@ d3.json("content-model.json", function(error, graph) {
     d3.selectAll("path").remove();
     d3.selectAll("polygon").remove();
 
-    // Unfortunately, ForceBundle does not retaint the metada
+    // Unfortunately, ForceBundle does not retain the metada
     // about the "value" of the line, so we
     // use the target IDs to lookuo the thickness of the line
     // from the original Force data
@@ -369,8 +469,8 @@ d3.json("content-model.json", function(error, graph) {
       .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(50,50,50,1)';  })
       .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
-      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.name+'</h4>Connections: ' + d.radius + '<br/>Views: ' + d.traffic); })
-      .on("mousedown", function(d){ renderConnectionTable(d);        svg.on('.zoom', null ); })
+      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.title+'</h4>Connections: ' + d.radius + '<br/>Views: ' + d.traffic); })
+      .on("mousedown", function(d){ renderConnectionTable(d); svg.on('.zoom', null ); })
       .on("mouseup", function(d){ zoomEnable(); })
       .on("mousemove", function(){  return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
       .on("mouseout", function(d){  connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); });
@@ -425,26 +525,24 @@ d3.json("content-model.json", function(error, graph) {
 
   // Scale the SVG marker according to it's importance
   function scaleMarker (d) {
+    d = d || 1;
     // var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
 
     // weight
-    // var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
+    var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
 
     // traffic
-    if (d.traffic === null) {
-      var pointScale = .1;
-    } else {
-      var pointScale = Math.sqrt(Math.sqrt(d.traffic) * 1.5) / 50;
-    }
+    // if (d.traffic === null) {
+    //   var pointScale = .1;
+    // } else {
+    //   var pointScale = Math.sqrt(Math.sqrt(d.traffic) * 1.5) / 50;
+    // }
     // pointScale = pointScale/ 10;
 
 
-    console.log(pointScale);
     var toReturn = '';
 
-
-
-    var markerArray = '-28.1,-16.2 0,-32.4 28.1,-16.2 28.1,16.2 0,32.4 -28.1,16.2'.split(' '); //embl poloygon
+    var markerArray = '-28.1,-16.2 0,-32.4 28.1,-16.2 28.1,16.2 0,32.4 -28.1,16.2'.split(' '); //embl style poloygon
 
     for (x=0;x<markerArray.length;x++) {
       var tempMarkerPoint = markerArray[x].split(',');
@@ -457,7 +555,7 @@ d3.json("content-model.json", function(error, graph) {
     return toReturn;
   }
 
-  // Highlight the connected nodes on hvoer of a node
+  // Highlight the connected nodes on hover of a node
   function connectionHighlight(d) {
     // var tempLines = d3.selectAll("path")[0];
     // d3.selectAll('path[data-parentnode="7"]').style("opacity", 0);
@@ -507,17 +605,17 @@ d3.json("content-model.json", function(error, graph) {
   function renderConnectionTable(d) {
     // $('.node-information').fadeIn();
 
-    var requestedContentModel = d.name.trim();
+    var requestedContentModel = d.title.trim();
     history.pushState(null, null, '#'+requestedContentModel);
 
     // Fetch the associated core content description in a really crude fashion :P
-    $.get('/content_model_viewer/index.html').then(function(responseData) {
-      // $('.node-information').html('');
-      $('.node-information').html('<div class="close">X</div>' + responseData); // add a "close" button
-      $('.node-information .close').click( function(){
-        closeConnectionTable();
-      });
-    });
+    // $.get('/content_model_viewer/index.html').then(function(responseData) {
+    //   // $('.node-information').html('');
+    //   $('.node-information').html('<div class="close">X</div>' + responseData); // add a "close" button
+    //   $('.node-information .close').click( function(){
+    //     closeConnectionTable();
+    //   });
+    // });
 
   }
 
