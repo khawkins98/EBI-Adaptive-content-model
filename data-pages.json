@@ -1,0 +1,16 @@
+---
+layout: null
+---
+{% assign posts_processed = site.posts | where:"layout","page" %}
+
+{"nodes":[
+  {% for post in posts_processed %}
+      {
+        "title": "{{ post.title }}",
+        "page-url":  "{{ post.page-url }}",
+        "users": "{% for user in post.users %}{{ user }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
+        "goals": "{% for goal in post.goals %}{{ goal }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
+        "url": "{{ post.url }}"
+      }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]}

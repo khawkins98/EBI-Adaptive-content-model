@@ -1,0 +1,28 @@
+---
+layout: default
+---
+
+<h2>{{ page.title }}</h2>
+
+<div class="page">
+  {{ content }}
+
+  {% for post in site.posts %}
+
+      parent-pages: {% for page in parent-pages.domains %}{{ page }}{% unless forloop.last %}, {% endunless %}{% endfor %}
+      <br/>
+
+      users: {% for user in post.users %}{{ user }}{% unless forloop.last %}, {% endunless %}{% endfor %}
+      <br/>
+
+      goals: {% for goal in post.goals %}{{ goal }}{% unless forloop.last %}, {% endunless %}{% endfor %}
+      <br/>
+
+
+
+
+  {% endfor %}
+
+</div>
+
+<p class="meta">Updated: {{ page.date | date_to_string }}</p>
