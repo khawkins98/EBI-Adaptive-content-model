@@ -20,7 +20,7 @@ body {
 
 }
 body svg,
-body .tooltip {
+body .info {
   font: 9px verdana, sans-serif;
 }
 .link-5 {
@@ -63,13 +63,17 @@ body .tooltip {
 
 h4 {
   margin: 0;
-  text-transform: uppercase;
-  font-weight: normal;
+  /*color: #fff;*/
+  font-size: 1rem;
 }
-.tooltip {
-  color: #fff;
-  background: #777;
-  padding: .5em;
+.info {
+  color: #222;
+  background: #FFF;
+  padding: .75rem;
+  position: absolute;
+  left: 10px;
+  bottom: 50px;
+  width: 200px;
 }
 
 .node-information {
@@ -82,8 +86,6 @@ h4 {
   padding: 1vw 1%;
   border: 1px solid rgba(0,0,0,.5);
 }
-
-
 </style>
 <div class="node-information"></div>
 
@@ -190,14 +192,36 @@ function animateIntro() {
     //           .delay(1000);
 }
 
-// Append the tooltip
-var tooltip = d3.select("body")
+// Append the info
+var info = d3.select("body")
   .append("div")
-  .attr('class','tooltip')
-  .style("position", "absolute")
+  .attr('class','info')
+  // .style("position", "absolute")
   .style("z-index", "10")
   .style("visibility", "hidden")
-  .html("<a href='#'>a simple tooltip</a>");
+  .html("<a href='#'>a simple info</a>");
+
+// Load Page data
+// We won't directly process this into the d3 visulisation,
+// rather we will use it as data to show to the user and filter on.
+var pageData = $.getJSON( "data-pages.json", function() {
+  // console.log( "success" );
+})
+  .done(function() {
+    // console.log( "second success" );
+  })
+  .fail(function() {
+    console.log( "data-pages.json error" );
+  })
+  .always(function() {
+    // console.log( "complete" );
+  });
+
+// process the page data, maybe?
+pageData.complete(function() {
+  // console.log( pageData.responseJSON.nodes );
+});
+
 
 // Load the data
 // http://khawkins98.github.io/EBI-Adaptive-content-model/data.json
@@ -251,6 +275,19 @@ d3.json("data.json", function(error, graph) {
           // newNode.x = Math.floor(Math.random() * 70);
           // newNode.y = Math.floor(Math.random() * 70);
           // newNode.weight = 0;
+
+          // Get affiliated data from data-pages.json object
+          var pagesToCrawl = pageData.responseJSON.nodes;
+          for (var i3 = 0; i3 < pagesToCrawl.length; i3++) {
+              // console.log(pagesToCrawl[i3]);
+            if (pagesToCrawl[i3]['page-url'] === newNode.title) {
+              newNode.pageUrl = pagesToCrawl[i3]['page-url'];
+              newNode.goals = pagesToCrawl[i3]['goals'];
+              newNode.users = pagesToCrawl[i3]['users'];
+              newNode.priority = pagesToCrawl[i3]['priority'];
+            }
+
+          }
 
           // add new node to master list
           nodes.push(newNode);
@@ -316,6 +353,7 @@ d3.json("data.json", function(error, graph) {
         newLink.value = 0.5;
         newLink.source = deepestMatch;
         newLink.target = i;
+
         graph.links.push(newLink);
 
       }
@@ -496,11 +534,19 @@ d3.json("data.json", function(error, graph) {
       .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(50,50,50,1)';  })
       .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
-      .on("mouseover", function(d){  connectionHighlight(d); return tooltip.style("visibility", "visible").html('<h4>'+d.title+'</h4>Connections: ' + d.radius + '<br/>Views: ' + d.traffic); })
+      .on("mouseover", function(d){  connectionHighlight(d); nodeHighlight(d['parent-pages'] || d.title); return info.style("visibility", "visible").html('<h4>'+d.title
+        + '</h4>Connections: ' + d.radius
+        + '<p>Goals: ' + d.goals + '</p>'
+        + '<p>Users: ' + d.users + '</p>'
+        + '<p>Priority: ' + d.priority + '</p>'
+        + '<p>Parent pages: ' + d['parent-pages'] + '</p>'
+        );
+      })
       .on("mousedown", function(d){ renderConnectionTable(d); svg.on('.zoom', null ); })
       .on("mouseup", function(d){ zoomEnable(); })
-      .on("mousemove", function(){  return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){  connectionHighlightReset(d); return tooltip.style("visibility", "hidden"); });
+      // .on("mousemove", function(){  return info.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
+      .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); return info.style("visibility", "hidden"); });
+      // .on("mouseout", function(d){  connectionHighlightReset(d);  });
 
   }
 
@@ -582,12 +628,59 @@ d3.json("data.json", function(error, graph) {
     return toReturn;
   }
 
+  // Highlight nodes with a common parent page
+  function nodeHighlight(toSearchFor) {
+    var nodesToHighlight = d3.selectAll(".node");
+    nodesToHighlight.style("opacity", "0"); // fade all
+    // if (selectedVal == "none") {
+    //     node.style("stroke", "white").style("stroke-width", "1");
+    // } else {
+        var selected = nodesToHighlight.filter(function (d, i) {
+          if (d['parent-pages']) {
+            var linkedPages = d['parent-pages'].split(', ');
+          } else {
+            var linkedPages = Array();
+            linkedPages.push(d.pageUrl);
+          }
+          if (linkedPages[0] === undefined) {
+            return false;
+          }
+          for (var i = 0; i < linkedPages.length; i++) {
+            console.log(linkedPages[i],toSearchFor);
+            var toSearchForArray = toSearchFor.split(', ');
+            if (toSearchForArray.indexOf(linkedPages[i]) >= 0) return true; 
+          }
+
+
+          // console.log(linkedPages);
+            // return d.name == toSearchFor; // if != search term, then filter
+        });
+        
+        // filter the nodes
+        selected.style("opacity", "1");
+        
+        // var link = d3.selectAll(".link")
+        // link.style("opacity", "0");
+        
+        // fade everything back in after XXms
+        // d3.selectAll(".node").transition()
+        //     .duration(1000)
+        //     .style("opacity", 1);
+    // }
+  }
+
+  // return all nodes to visible
+  function nodeHighlightReset() {
+        d3.selectAll(".node").style("opacity", 1);
+  }
+
+
   // Highlight the connected nodes on hover of a node
   function connectionHighlight(d) {
     // var tempLines = d3.selectAll("path")[0];
     // d3.selectAll('path[data-parentnode="7"]').style("opacity", 0);
 
-    d3.selectAll('path').style("opacity",0);
+    d3.selectAll('path').style("opacity",0.1);
     d3.selectAll('path[data-parentnode="' + d.index + '"]').style("opacity",1);
     // console.log('passed', d);
     // data-parentnode

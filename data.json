@@ -10,8 +10,8 @@ layout: null
       "parent-pages":  "{% for parent-page in post.parent-pages %}{{ parent-page }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "users": "{% for user in post.users %}{{ user }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "goals": "{% for goal in post.goals %}{{ goal }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
-      "priority": "{{ post.priority }}"
-      "url": "{{ post.url }}"
+      "priority": "{{ post.priority }}",
+      "database-url": "{{ post.url }}"
     }{% unless forloop.last %},{% endunless %}
   {% endfor %}
 ],
