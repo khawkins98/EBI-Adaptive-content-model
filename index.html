@@ -19,8 +19,7 @@ body {
   margin: 0;
 
 }
-body svg,
-body .info {
+body svg {
   font: 9px verdana, sans-serif;
 }
 .link-5 {
@@ -71,9 +70,10 @@ h4 {
   background: #FFF;
   padding: .75rem;
   position: absolute;
-  left: 10px;
-  bottom: 50px;
-  width: 200px;
+  left: 0;
+  top: 250px;
+  width: 250px;
+  font-size: .8rem;
 }
 
 .node-information {
@@ -284,6 +284,7 @@ d3.json("data.json", function(error, graph) {
               newNode.pageUrl = pagesToCrawl[i3]['page-url'];
               newNode.goals = pagesToCrawl[i3]['goals'];
               newNode.users = pagesToCrawl[i3]['users'];
+              newNode.role = pagesToCrawl[i3]['role'];
               newNode.priority = pagesToCrawl[i3]['priority'];
             }
 
@@ -534,10 +535,11 @@ d3.json("data.json", function(error, graph) {
       .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(50,50,50,1)';  })
       .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
-      .on("mouseover", function(d){  connectionHighlight(d); nodeHighlight(d['parent-pages'] || d.title); return info.style("visibility", "visible").html('<h4>'+d.title
+      .on("mouseover", function(d){  connectionHighlight(d); nodeHighlightSiblings(d['parent-pages'] || d.title); return info.style("visibility", "visible").html('<h4>'+d.title
         + '</h4>Connections: ' + d.radius
-        + '<p>Goals: ' + d.goals + '</p>'
-        + '<p>Users: ' + d.users + '</p>'
+        + '<p>Goals: ' + createInteractiveInfo(d.goals,'goals') + '</p>'
+        + '<p>Users: ' + createInteractiveInfo(d.users,'users') + '</p>'
+        + '<p>Role: ' + createInteractiveInfo(d.role,'role') + '</p>'
         + '<p>Priority: ' + d.priority + '</p>'
         + '<p>Parent pages: ' + d['parent-pages'] + '</p>'
         );
@@ -545,8 +547,8 @@ d3.json("data.json", function(error, graph) {
       .on("mousedown", function(d){ renderConnectionTable(d); svg.on('.zoom', null ); })
       .on("mouseup", function(d){ zoomEnable(); })
       // .on("mousemove", function(){  return info.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); return info.style("visibility", "hidden"); });
-      // .on("mouseout", function(d){  connectionHighlightReset(d);  });
+      .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); });
+      // .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); return info.style("visibility", "hidden"); });
 
   }
 
@@ -629,51 +631,67 @@ d3.json("data.json", function(error, graph) {
   }
 
   // Highlight nodes with a common parent page
-  function nodeHighlight(toSearchFor) {
+  // some good context on filtering in D3: http://www.coppelia.io/2014/07/an-a-to-z-of-extra-features-for-the-d3-force-layout/
+  function nodeHighlightSiblings(toSearchFor) {
     var nodesToHighlight = d3.selectAll(".node");
     nodesToHighlight.style("opacity", "0"); // fade all
-    // if (selectedVal == "none") {
-    //     node.style("stroke", "white").style("stroke-width", "1");
-    // } else {
-        var selected = nodesToHighlight.filter(function (d, i) {
-          if (d['parent-pages']) {
-            var linkedPages = d['parent-pages'].split(', ');
-          } else {
-            var linkedPages = Array();
-            linkedPages.push(d.pageUrl);
-          }
-          if (linkedPages[0] === undefined) {
-            return false;
-          }
-          for (var i = 0; i < linkedPages.length; i++) {
-            console.log(linkedPages[i],toSearchFor);
-            var toSearchForArray = toSearchFor.split(', ');
-            if (toSearchForArray.indexOf(linkedPages[i]) >= 0) return true; 
-          }
 
-
-          // console.log(linkedPages);
-            // return d.name == toSearchFor; // if != search term, then filter
-        });
-        
-        // filter the nodes
-        selected.style("opacity", "1");
-        
-        // var link = d3.selectAll(".link")
-        // link.style("opacity", "0");
-        
-        // fade everything back in after XXms
-        // d3.selectAll(".node").transition()
-        //     .duration(1000)
-        //     .style("opacity", 1);
-    // }
+    var selected = nodesToHighlight.filter(function (d, i) {          
+      if (d['parent-pages']) {
+        var linkedPages = d['parent-pages'].split(', '); // for content nodes
+      } else {
+        var linkedPages = Array(); // for page nodes
+        linkedPages.push(d.pageUrl);
+      }
+      // exit if the page placeholder has no metadata
+      if (linkedPages[0] === undefined) {
+        return false;
+      }
+      // if the node has a matching url
+      for (var i = 0; i < linkedPages.length; i++) {
+        // console.log(linkedPages[i],toSearchFor);
+        var toSearchForArray = toSearchFor.split(', ');
+        if (toSearchForArray.indexOf(linkedPages[i]) >= 0) return true; 
+      }
+    });
+    
+    // filter the nodes
+    selected.style("opacity", "1");
   }
 
-  // return all nodes to visible
+  // Highlight nodes with a common user
+  function nodeHighlightUsers(toSearchFor) {
+    var nodesToHighlight = d3.selectAll(".node");
+    nodesToHighlight.style("opacity", "0"); // fade all
+
+    console.log('run');
+
+    var selected = nodesToHighlight.filter(function (d, i) {          
+      // if (d['parent-pages']) {
+      //   var linkedPages = d['parent-pages'].split(', '); // for content nodes
+      // } else {
+      //   var linkedPages = Array(); // for page nodes
+      //   linkedPages.push(d.pageUrl);
+      // }
+      // // exit if the page placeholder has no metadata
+      // if (linkedPages[0] === undefined) {
+      //   return false;
+      // }
+      // // if the node has a matching url
+      // for (var i = 0; i < linkedPages.length; i++) {
+      //   // console.log(linkedPages[i],toSearchFor);
+      //   var toSearchForArray = toSearchFor.split(', ');
+      //   if (toSearchForArray.indexOf(linkedPages[i]) >= 0) return true; 
+      // }
+    });
+    
+    // filter the nodes
+    selected.style("opacity", "1");
+  }
+  // make all nodes visible
   function nodeHighlightReset() {
-        d3.selectAll(".node").style("opacity", 1);
+    d3.selectAll(".node").style("opacity", 1);
   }
-
 
   // Highlight the connected nodes on hover of a node
   function connectionHighlight(d) {
@@ -748,6 +766,20 @@ d3.json("data.json", function(error, graph) {
   function hexToRgb(hex) {
       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
       return result ? parseInt(result[1], 16) + "," + parseInt(result[2], 16) + "," + parseInt(result[3], 16) : null;
+  }
+
+  // generate markup for info dialog
+  function createInteractiveInfo(d,linkClass) {
+    if (d == undefined) { return 'None known'; }
+    var rolesArray = d.split(', '),
+        output = '';
+    
+    for (var i = 0; i < rolesArray.length; i++) {
+      output += '<a href="#" class="node-filter ' + linkClass + ' ' + rolesArray[i] + '">' + rolesArray[i] + '</a> <br/>';
+      // console.log(rolesArray[i]);
+    }
+    return output;
+
   }
 
 });
