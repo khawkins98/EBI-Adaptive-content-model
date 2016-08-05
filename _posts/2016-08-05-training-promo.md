@@ -1,19 +1,18 @@
 ---
 layout: post
-title: "Landing page search"
+title: "Training promo image"
 parent-pages:
-- /www.ebi.ac.uk
-- /search
+- /training
+- /services
 users:
 - scientists new to EBI
 - visitors
 goals:
-- Facilitate rapid searching
-- Educate on role of EBI search
+- Inform on availibility of EBI training
 priority: 2
 role:
+- branding
 - navigation
-- informational
 ---
 
 No further description.

@@ -1,16 +1,15 @@
 ---
 layout: post
-title: "Landing page search"
+title: "Service data submission"
 parent-pages:
-- /www.ebi.ac.uk
-- /search
+- /submission
+- /services
 users:
 - scientists new to EBI
 - visitors
 goals:
-- Facilitate rapid searching
-- Educate on role of EBI search
-priority: 2
+- Inform on submitting data to EBI
+priority: 6
 role:
 - navigation
 - informational

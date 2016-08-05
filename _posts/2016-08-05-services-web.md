@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Landing page search"
+title: "Web services information"
 parent-pages:
-- /www.ebi.ac.uk
-- /search
+- /services
 users:
 - scientists new to EBI
 - visitors
 goals:
-- Facilitate rapid searching
-- Educate on role of EBI search
+- Connect users to web services
+- Inform on availibility of web services
 priority: 2
 role:
 - navigation

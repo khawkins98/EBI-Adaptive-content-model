@@ -1,15 +1,14 @@
 ---
 layout: post
-title: "Mission"
+title: "Service intro text"
 parent-pages:
-- /www.ebi.ac.uk
-- /about
+- /services
 users:
 - scientists new to EBI
 - visitors
 goals:
-- Frame user understanding of why EBI exists and what it does
-priority: 7
+- Inform on availibility of EBI service domains
+priority: 2
 role:
 - branding
 - informational

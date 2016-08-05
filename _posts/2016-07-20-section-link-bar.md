@@ -10,6 +10,7 @@ parent-pages:
 - /about
 - /industry
 - ELIXIR
+- /search
 users:
 - scientists new to EBI
 - visitors
