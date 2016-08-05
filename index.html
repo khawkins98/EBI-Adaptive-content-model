@@ -13,7 +13,7 @@ order: 1
 
 <style>
 
-#content.row { display: none; }
+#content.row { margin: 0; padding: 0; }
 body svg {
   font: 9px verdana, sans-serif;
 }
@@ -62,11 +62,13 @@ h4 {
   /*color: #fff;*/
   font-size: 1rem;
 }
-.info {
+#info-container {
   position: absolute;
   left: 0;
   top: 250px;
   width: 250px;
+}
+#info-container .info {
   font-size: .8rem;
 }
 
@@ -82,7 +84,7 @@ h4 {
 }
 </style>
 <div class="node-information"></div>
-
+<div id="info-container" class="callout"></div>
 <script>
 
 // About:
@@ -186,14 +188,44 @@ function animateIntro() {
     //           .delay(1000);
 }
 
+// render controls to filter components
+function infoBoxControls() {
+  return '<form>\
+            <div class="row">\
+              <div class="small-12 columns">\
+                <select name="select">\
+                  <option value="null" selected>Highlight nodes with...</option> \
+                  <option value="value2">Value 2</option>\
+                  <option value="value3">Value 3</option>\
+                </select>\
+              </div>\
+            </div>\
+          </form>';
+}
+
+// make things dragable
+var drag = d3.behavior.drag()
+    .on("drag", function() {
+        var coordinates = [0, 0];
+        coordinates = d3.mouse(document.body);
+        // coordinates = d3.mouse(this); //relative to origin
+        var x = coordinates[0];
+        var y = coordinates[1];
+        // console.log(x,y,this);
+        d3.select(this).attr("style", function() {
+            return "top: " + y + "px; left: " + x + "px;";
+        })
+    });
+
 // Append the info
-var info = d3.select("body")
+d3.select("#info-container").style("z-index", "10").html(infoBoxControls()).call(drag);;
+var info = d3.select("#info-container")
   .append("div")
-  .attr('class','info callout')
+  .attr('class','info')
   // .style("position", "absolute")
-  .style("z-index", "10")
-  .style("visibility", "hidden")
-  .html("<a href='#'>a simple info</a>");
+  // .style("visibility", "hidden")
+  .html('Hover over a node for more information.');
+
 
 // Load Page data
 // We won't directly process this into the d3 visulisation,
@@ -564,7 +596,7 @@ d3.json("data.json", function(error, graph) {
         + '<p>Users: ' + createInteractiveInfo(d.users,'users') + '</p>'
         + '<p>Role: ' + createInteractiveInfo(d.role,'role') + '</p>'
         + '<p>Priority: ' + d.priority + '</p>'
-        + '<p>Parent pages: ' + d['parent-pages'] + '</p>'
+        + '<p>Parent pages: ' + d['parent-pages'] + '</p>' 
         );
       })
       .on("mousedown", function(d){ renderConnectionTable(d); svg.on('.zoom', null ); })
@@ -810,8 +842,8 @@ d3.json("data.json", function(error, graph) {
       // console.log(rolesArray[i]);
     }
     return output;
-
   }
+
 
 });
 </script>
@@ -820,4 +852,5 @@ d3.json("data.json", function(error, graph) {
   Handy pattern fills:
   https://iros.github.io/patternfills/sample_d3.html
   -->
-  <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1"> <defs> <pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg==" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>
+  <svg height="10" width="10" xmlns="http://www.w3.org/2000/svg" version="1.1" style="display:none;"> <defs> <pattern id="diagonal-stripe-1" patternUnits="userSpaceOnUse" width="10" height="10"> <image xlink:href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxMCcgaGVpZ2h0PScxMCc+CiAgPHJlY3Qgd2lkdGg9JzEwJyBoZWlnaHQ9JzEwJyBmaWxsPSd3aGl0ZScvPgogIDxwYXRoIGQ9J00tMSwxIGwyLC0yCiAgICAgICAgICAgTTAsMTAgbDEwLC0xMAogICAgICAgICAgIE05LDExIGwyLC0yJyBzdHJva2U9J2JsYWNrJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+Cg==" x="0" y="0" width="10" height="10"> </image> </pattern> </defs> </svg>
+
