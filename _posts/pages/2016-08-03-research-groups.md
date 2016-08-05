@@ -12,6 +12,8 @@ priority: 3
 role:
 - navigation
 - informational
+position-vertical: 70
+position-horizontal: 70
 ---
 
 No further description.

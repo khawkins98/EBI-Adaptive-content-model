@@ -1,10 +1,13 @@
 ---
 layout: post
-title: "Section bar"
+title: "Top black section bar"
 parent-pages:
 - /www.ebi.ac.uk
+- /www.embl.org
 - /services
+- /training
 - /research
+- /about
 - /industry
 - ELIXIR
 users:
