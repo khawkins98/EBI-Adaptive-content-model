@@ -22,7 +22,7 @@ body {
 body svg {
   font: 9px verdana, sans-serif;
 }
-.link-5 {
+.link-10 {
   fill: none;
   stroke: #000;
   stroke-dasharray: 2px 2px;
@@ -33,7 +33,7 @@ body svg {
   fill: none;
   stroke: #666;
   stroke-opacity: .4;
-  stroke-width: .9px;
+  stroke-width: 1.1px;
 }
 
 .node circle:hover {
@@ -58,6 +58,8 @@ body svg {
 }
 .node text.group-1 {
   text-transform: uppercase;
+}
+.node text.group-2 {
 }
 
 h4 {
@@ -103,7 +105,7 @@ h4 {
 
 // set the vis size
 var width = window.innerWidth,
-    height = window.innerHeight;
+    height = window.innerHeight - $('header').height();
 
 // set the colors we wish to use
 var color = d3.scale.ordinal()
@@ -286,6 +288,13 @@ d3.json("data.json", function(error, graph) {
               newNode.users = pagesToCrawl[i3]['users'];
               newNode.role = pagesToCrawl[i3]['role'];
               newNode.priority = pagesToCrawl[i3]['priority'];
+
+              // has an anchored placement been requested?
+              if (pagesToCrawl[i3]['position-horizontal'].length > 0) {
+                newNode.fixed = true;
+                newNode.y = height * (pagesToCrawl[i3]['position-vertical'] / 100);
+                newNode.x = width * (pagesToCrawl[i3]['position-horizontal'] / 100);
+              }
             }
 
           }
@@ -299,8 +308,8 @@ d3.json("data.json", function(error, graph) {
         // make a link between the parent page item and the child content item
         var newLink = new Object();
         newLink.value = 0.1;
-        newLink.source = parentPagePosition;
-        newLink.target = i;
+        newLink.source = i;
+        newLink.target = parentPagePosition;
 
         graph.links.push(newLink);
       }
@@ -504,6 +513,12 @@ d3.json("data.json", function(error, graph) {
     function findConnectionInfo(sourceID,targetID) {
       for(var i = 0; i < graph.links.length; i++){
         if (graph.links[i].source.index == sourceID && graph.links[i].target.index == targetID) {
+          // Increment the number of nodes this is connected to.
+          // Note: The target is where the content is referencing a source page.
+          // graph.links[i].target.radius++;
+          // console.log(graph.links[i]);
+
+          // make the connection
           return graph.links[i];
         }
       }
@@ -520,12 +535,28 @@ d3.json("data.json", function(error, graph) {
       var parentNode = results[i][results[i].length-1];
       var parentConnection = findConnectionInfo(results[i][0].index,results[i][results[i].length-1].index);
 
+      // svg.append("defs").selectAll("marker")
+      //     .data(["suit", "licensing", "resolved"])
+      //   .enter().append("marker")
+      //     .attr("id", function(d) { return d; })
+      //     .attr("viewBox", "0 -5 10 10")
+      //     .attr("refX", 25)
+      //     .attr("refY", 0)
+      //     .attr("markerWidth", 6)
+      //     .attr("markerHeight", 6)
+      //     .attr("orient", "auto")
+      //   .append("path")
+      //     .attr("d", "M0,-5L10,0L0,5 L10,0 L0, -5")
+      //     .style("stroke", "#4679BD")
+      //     .style("opacity", "0.6");
+
       // svg.insertBefore("path",svg).attr("d", d3line(results[i]))
       svgInner.insert("path",':first-child').attr("d", d3line(results[i]))
         .style("stroke-width", function(d) {  return (parentConnection.value * 2) + .6 })
         .style("stroke", function() {  return 'rgba('+hexToRgb(color(nodes[parentNode.index].group))+',.85)'; })
         .attr("class", function(d) {  return "link-"+(parentConnection.value) * 100 })
-        .attr("data-parentnode", function(d) {  return parentNode.index; })
+        .attr("data-parentnode", function(d) { return parentNode.index; })
+        // .style("marker-end",  "url(#suit)")
         .style("fill", "none");
         // .style('stroke-opacity',0.4);
     }
@@ -579,7 +610,7 @@ d3.json("data.json", function(error, graph) {
     tickCount++;
     if (tickCount > 200) {
       force.stop();
-      tickCount = 180; // so we can restart after a marker is moved
+      tickCount = 100; // so we can restart after a marker is moved
       invokeForceBundling(); // draw the new ForceBundle data
     }
 
@@ -633,30 +664,30 @@ d3.json("data.json", function(error, graph) {
   // Highlight nodes with a common parent page
   // some good context on filtering in D3: http://www.coppelia.io/2014/07/an-a-to-z-of-extra-features-for-the-d3-force-layout/
   function nodeHighlightSiblings(toSearchFor) {
-    var nodesToHighlight = d3.selectAll(".node");
-    nodesToHighlight.style("opacity", "0"); // fade all
+    // var nodesToHighlight = d3.selectAll(".node");
+    // nodesToHighlight.style("opacity", "0"); // fade all
 
-    var selected = nodesToHighlight.filter(function (d, i) {          
-      if (d['parent-pages']) {
-        var linkedPages = d['parent-pages'].split(', '); // for content nodes
-      } else {
-        var linkedPages = Array(); // for page nodes
-        linkedPages.push(d.pageUrl);
-      }
-      // exit if the page placeholder has no metadata
-      if (linkedPages[0] === undefined) {
-        return false;
-      }
-      // if the node has a matching url
-      for (var i = 0; i < linkedPages.length; i++) {
-        // console.log(linkedPages[i],toSearchFor);
-        var toSearchForArray = toSearchFor.split(', ');
-        if (toSearchForArray.indexOf(linkedPages[i]) >= 0) return true; 
-      }
-    });
+    // var selected = nodesToHighlight.filter(function (d, i) {          
+    //   if (d['parent-pages']) {
+    //     var linkedPages = d['parent-pages'].split(', '); // for content nodes
+    //   } else {
+    //     var linkedPages = Array(); // for page nodes
+    //     linkedPages.push(d.pageUrl);
+    //   }
+    //   // exit if the page placeholder has no metadata
+    //   if (linkedPages[0] === undefined) {
+    //     return false;
+    //   }
+    //   // if the node has a matching url
+    //   for (var i = 0; i < linkedPages.length; i++) {
+    //     // console.log(linkedPages[i],toSearchFor);
+    //     var toSearchForArray = toSearchFor.split(', ');
+    //     if (toSearchForArray.indexOf(linkedPages[i]) >= 0) return true; 
+    //   }
+    // });
     
     // filter the nodes
-    selected.style("opacity", "1");
+    // selected.style("opacity", "1");
   }
 
   // Highlight nodes with a common user
@@ -695,20 +726,28 @@ d3.json("data.json", function(error, graph) {
 
   // Highlight the connected nodes on hover of a node
   function connectionHighlight(d) {
-    // var tempLines = d3.selectAll("path")[0];
-    // d3.selectAll('path[data-parentnode="7"]').style("opacity", 0);
 
-    d3.selectAll('path').style("opacity",0.1);
-    d3.selectAll('path[data-parentnode="' + d.index + '"]').style("opacity",1);
-    // console.log('passed', d);
-    // data-parentnode
-    // for ( y = 0; y < tempLines.length; y++ ) {
-    //   console.log(tempLines[y]);
-    //   if ((tempLines[y].__data__.source.group != d.group) && (tempLines[y].__data__.target.group != d.group)) {
-    //     d3.select(tempLines[y]).transition().style("opacity", 0);
-    //     // tempData[y].style("strokeOpacity", function(d) { return '0'; });
-    //   }
-    // }
+    //Create an array logging what is connected to what
+    var linkedByIndex = {};
+    for (i = 0; i < graph.nodes.length; i++) {
+      linkedByIndex[i + "," + i] = 1;
+    };
+    graph.links.forEach(function (d) {
+      linkedByIndex[d.source.index + "," + d.target.index] = 1;
+    });
+    //This function looks up whether a pair are neighbours
+    function neighboring(a, b) {
+      return linkedByIndex[a.index + "," + b.index];
+    }
+    
+    //Reduce the opacity of all but the neighbouring nodes
+    node.style("opacity", function (o) {
+      console.log(d,o);
+        return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+    });
+    // link.style("opacity", function (o) {
+    //     return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;
+    // });
   }
 
   // Reset the highlight on mouse out
