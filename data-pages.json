@@ -12,6 +12,8 @@ layout: null
         "goals": "{% for goal in post.goals %}{{ goal }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
         "role": "{% for role in post.role %}{{ role }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
         "priority": "{{ post.priority }}",
+        "position-horizontal": "{{ post.position-horizontal }}",
+        "position-vertical": "{{ post.position-vertical }}",
         "database-url": "{{ post.url }}"
       }{% unless forloop.last %},{% endunless %}
   {% endfor %}
