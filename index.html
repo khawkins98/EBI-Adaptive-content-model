@@ -13,12 +13,7 @@ order: 1
 
 <style>
 
-body {
-  /*background: rgb(255,255,255);*/
-  background: rgb(55,55,55);
-  margin: 0;
-
-}
+#content.row { display: none; }
 body svg {
   font: 9px verdana, sans-serif;
 }
@@ -26,7 +21,7 @@ body svg {
   fill: none;
   stroke: #000;
   stroke-dasharray: 2px 2px;
-  stroke-opacity: .4;
+  stroke-opacity: .8;
   stroke-width: .8px;
 }
 .link-50 {
@@ -49,12 +44,12 @@ body svg {
   pointer-events: none;
   position: relative;
   z-index: 100;
-  color: #FFF;
+  color: #222;
   text-shadow:
-   -1px -1px .1px #000,
-    1px -1px .1px #000,
-    -1px 1px .1px #000,
-     1px 1px .1px #000;
+   -1px -1px .1px #fff,
+    1px -1px .1px #fff,
+    -1px 1px .1px #fff,
+     1px 1px .1px #fff;
 }
 .node text.group-1 {
   text-transform: uppercase;
@@ -68,9 +63,6 @@ h4 {
   font-size: 1rem;
 }
 .info {
-  color: #222;
-  background: #FFF;
-  padding: .75rem;
   position: absolute;
   left: 0;
   top: 250px;
@@ -197,7 +189,7 @@ function animateIntro() {
 // Append the info
 var info = d3.select("body")
   .append("div")
-  .attr('class','info')
+  .attr('class','info callout')
   // .style("position", "absolute")
   .style("z-index", "10")
   .style("visibility", "hidden")
@@ -255,8 +247,8 @@ d3.json("data.json", function(error, graph) {
   // Process loaded JSON
   // Set defaults and create parent pages
   for (var i = 0; i < nodes.length; i++) {
-    nodes[i].radius = nodes[i].radius || 1; // default size
-    nodes[i].group  = nodes[i].group || 2; // 2 = content
+    nodes[i].radius = nodes[i].radius || 1; // 1 = page node
+    nodes[i].group  = nodes[i].group || 2; // 2 = content node
 
     // make new page objects from referenced items
     if (nodes[i]['parent-pages'] != undefined) {
@@ -308,8 +300,8 @@ d3.json("data.json", function(error, graph) {
         // make a link between the parent page item and the child content item
         var newLink = new Object();
         newLink.value = 0.1;
-        newLink.source = i;
-        newLink.target = parentPagePosition;
+        newLink.source = parentPagePosition;
+        newLink.target = i;
 
         graph.links.push(newLink);
       }
@@ -471,7 +463,7 @@ d3.json("data.json", function(error, graph) {
   var link = svgInner.selectAll(".link")
     .data(graph.links)
     .enter().append("line")
-      .style("stroke", function(d) { return color(d.target.group); })
+      .style("stroke", function(d) { console.log(d.source.group); return color(d.source.group); })
       .attr("class", function(d) {  return "link-"+(d.value) * 100 })
       .style("stroke-width", function(d) { return "0.1"; });
 
@@ -480,7 +472,7 @@ d3.json("data.json", function(error, graph) {
       .attr("dx", function(d) { return 8 + d.radius * 1.4; })
       // .attr("dx", function(d) { return ((d.radius * 2.5) + 4); })
       .attr("class", function(d) {  return "group-"+(d.group) })
-      .style("fill", function(d) {  return 'rgba(255,255,255,.9)' })
+      .style("fill", function(d) {  return 'rgba(0,0,0,.9)' })
       .attr("charge", -500)
       .attr("dy", ".35em")
       .text(function(d) { return (d.title).replace(/^(.*[\\\/])/g,''); }); //Keep only the name after the trailing slash
@@ -563,7 +555,7 @@ d3.json("data.json", function(error, graph) {
 
     node.append('svg:polygon')
       .attr('points', function(d)  { return scaleMarker(d); })
-      .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(50,50,50,1)';  })
+      .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(255,255,255,1)';  })
       .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
       .on("mouseover", function(d){  connectionHighlight(d); nodeHighlightSiblings(d['parent-pages'] || d.title); return info.style("visibility", "visible").html('<h4>'+d.title
@@ -592,7 +584,7 @@ d3.json("data.json", function(error, graph) {
                                       "scale(" + d3.event.scale + ")");
 
             // darken the background as we zoom in or out
-            var backgoundRGBVal = Math.round(55 / d3.event.scale);
+            var backgoundRGBVal = Math.round(255 / d3.event.scale);
             document.body.style.backgroundColor = 'rgb(' + backgoundRGBVal + ',' + backgoundRGBVal + ',' + backgoundRGBVal + ')';
 
           });
@@ -767,7 +759,7 @@ d3.json("data.json", function(error, graph) {
       case 1:
         return 'rgba(213, 60, 60,.8)';
       case 2:
-        return 'rgba(213, 60, 60,.8)';
+        return 'rgba(100, 60, 60,.8)';
       // case 3:
       //   return 'rgba(48, 171, 48,.8)';
       default:
