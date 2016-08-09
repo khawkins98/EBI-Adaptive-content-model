@@ -84,7 +84,45 @@ h4 {
 }
 </style>
 <div class="node-information"></div>
-<div id="info-container" class="callout"></div>
+<div id="info-container" class="callout">
+  <form>
+    <div class="row">
+      <div class="small-12 columns">
+        <select name="select" data-target-property="role">
+          <option value="null" selected>Role</option> 
+          <option value="navig">Navigation</option>
+          <option value="inform">Informational</option>
+          <option value="brand">Branding</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="small-12 columns">
+        <select name="select" data-target-property="users">
+          <option value="null" selected>Users</option> 
+          <option value="new">scientists new to EBI</option>
+          <option value="famil">scientists familiar with EBI</option>
+          <option value="visi">Visitors</option>
+          <option value="funder">Funders</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="small-12 columns">
+        <select name="select" data-target-property="goals">
+          <option value="null" selected>Goals</option> 
+          <option value="xxxx">??</option>
+          <option value="inform">Informational</option>
+          <option value="brand">Branding</option>
+        </select>
+      </div>
+    </div>
+
+  </form>
+</div>
+
 <script>
 
 // About:
@@ -189,19 +227,19 @@ function animateIntro() {
 }
 
 // render controls to filter components
-function infoBoxControls() {
-  return '<form>\
-            <div class="row">\
-              <div class="small-12 columns">\
-                <select name="select">\
-                  <option value="null" selected>Highlight nodes with...</option> \
-                  <option value="value2">Value 2</option>\
-                  <option value="value3">Value 3</option>\
-                </select>\
-              </div>\
-            </div>\
-          </form>';
-}
+// function infoBoxControls() {
+//   return '<form>\
+//             <div class="row">\
+//               <div class="small-12 columns">\
+//                 <select name="select">\
+//                   <option value="null" selected>Highlight nodes with...</option> \
+//                   <option value="value2">Value 2</option>\
+//                   <option value="value3">Value 3</option>\
+//                 </select>\
+//               </div>\
+//             </div>\
+//           </form>';
+// }
 
 // make things dragable
 var drag = d3.behavior.drag()
@@ -218,7 +256,7 @@ var drag = d3.behavior.drag()
     });
 
 // Append the info
-d3.select("#info-container").style("z-index", "10").html(infoBoxControls()).call(drag);;
+d3.select("#info-container").style("z-index", "10").call(drag);;
 var info = d3.select("#info-container")
   .append("div")
   .attr('class','info')
@@ -495,7 +533,7 @@ d3.json("data.json", function(error, graph) {
   var link = svgInner.selectAll(".link")
     .data(graph.links)
     .enter().append("line")
-      .style("stroke", function(d) { console.log(d.source.group); return color(d.source.group); })
+      .style("stroke", function(d) { return color(d.source.group); })
       .attr("class", function(d) {  return "link-"+(d.value) * 100 })
       .style("stroke-width", function(d) { return "0.1"; });
 
@@ -599,7 +637,7 @@ d3.json("data.json", function(error, graph) {
         + '<p>Parent pages: ' + d['parent-pages'] + '</p>' 
         );
       })
-      .on("mousedown", function(d){ renderConnectionTable(d); svg.on('.zoom', null ); })
+      .on("mousedown", function(d){ svg.on('.zoom', null ); })
       .on("mouseup", function(d){ zoomEnable(); })
       // .on("mousemove", function(){  return info.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
       .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); });
@@ -745,7 +783,9 @@ d3.json("data.json", function(error, graph) {
   }
   // make all nodes visible
   function nodeHighlightReset() {
-    d3.selectAll(".node").style("opacity", 1);
+    evaluateNodeVisibility('reset');
+    // Sync with global filters 
+    evaluateNodeVisibility();
   }
 
   // Highlight the connected nodes on hover of a node
@@ -772,6 +812,9 @@ d3.json("data.json", function(error, graph) {
     // link.style("opacity", function (o) {
     //     return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;
     // });
+
+    // Sync with global filters 
+    evaluateNodeVisibility();
   }
 
   // Reset the highlight on mouse out
@@ -799,32 +842,32 @@ d3.json("data.json", function(error, graph) {
     }
   }
 
-  $('svg').mousedown( function(){
-    closeConnectionTable();
-  });
+  // $('svg').mousedown( function(){
+  //   closeConnectionTable();
+  // });
 
-  function renderConnectionTable(d) {
-    // $('.node-information').fadeIn();
+  // function renderConnectionTable(d) {
+  //   // $('.node-information').fadeIn();
 
-    var requestedContentModel = d.title.trim();
-    history.pushState(null, null, '#'+requestedContentModel);
+  //   var requestedContentModel = d.title.trim();
+  //   history.pushState(null, null, '#'+requestedContentModel);
 
-    // Fetch the associated core content description in a really crude fashion :P
-    // $.get('/content_model_viewer/index.html').then(function(responseData) {
-    //   // $('.node-information').html('');
-    //   $('.node-information').html('<div class="close">X</div>' + responseData); // add a "close" button
-    //   $('.node-information .close').click( function(){
-    //     closeConnectionTable();
-    //   });
-    // });
+  //   // Fetch the associated core content description in a really crude fashion :P
+  //   // $.get('/content_model_viewer/index.html').then(function(responseData) {
+  //   //   // $('.node-information').html('');
+  //   //   $('.node-information').html('<div class="close">X</div>' + responseData); // add a "close" button
+  //   //   $('.node-information .close').click( function(){
+  //   //     closeConnectionTable();
+  //   //   });
+  //   // });
 
-  }
+  // }
 
-  function closeConnectionTable() {
-    if ($('.node-information').css('opacity') == 1) {
-      $('.node-information').fadeOut();
-    }
-  }
+  // function closeConnectionTable() {
+  //   if ($('.node-information').css('opacity') == 1) {
+  //     $('.node-information').fadeOut();
+  //   }
+  // }
 
   function hexToRgb(hex) {
       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
@@ -844,6 +887,73 @@ d3.json("data.json", function(error, graph) {
     return output;
   }
 
+  // Crawl through paramaters and asses what should be visible, and what not...
+  function evaluateNodeVisibility(event) {
+    event = event || 'null'; // default
+
+    // user wants a reset...
+    if (event == 'reset') {
+      console.log('making all nodes visible');
+      d3.selectAll('.node').style('opacity', 1);
+      return true;
+    }
+
+    // compare each attribute against a desired value
+    function attributeContains(valuesPresent,valueComparison) {
+      if (valuesPresent == undefined) {
+        return false;
+      }
+
+      // console.log(valuesPresent);
+      // split each tag into an item
+      var valuesPresentArray = valuesPresent.split(', ');
+      // if we find a match, highlight the node
+      for (var i = 0; i < valuesPresentArray.length; i++) {
+        // not exact comparison, so 'nav' == 'navigation'
+        // console.log(valuesPresentArray[i].indexOf(valueComparison),valuesPresentArray[i],valueComparison);
+        if (valuesPresentArray[i].indexOf(valueComparison) >= 0) {
+          console.log('passes: ' + valuesPresentArray[i]);
+          return true;
+        }
+      }
+
+      // if no matches, fail
+      // console.log('fail, will faid');
+      return false;
+    }
+
+    // process each filter
+    $.each($('#info-container select'), function( key, value ) {
+
+      // console.log(this);
+
+      // Get the active value and associated target property
+      var targetValue    = $("option:selected", this).attr("value"),
+          targetProperty = $(this).attr("data-target-property");
+      console.log('Looking for nodes with value: ' + targetValue + ', in property: ' + targetProperty);
+      // console.log(event);
+
+      if (targetValue != 'null') {
+        node.style('opacity', function (o) {
+          if (this.style.opacity != 0.1) { // we don't want to conditionally bring back nodes, only filter them out 
+            return attributeContains(o[targetProperty],targetValue) ? 1 : 0.1;
+          } else {
+            console.log('Node is already faded, no need to evaluate')
+            return 0.1;
+          }
+        });
+      } else {
+        console.log(targetProperty + ' is null, so not evaluating...')
+      }
+    });
+
+  }
+
+  $('#info-container select').on('change', function() {
+    // console.log(this);
+    evaluateNodeVisibility('reset');
+    evaluateNodeVisibility();
+  });
 
 });
 </script>
