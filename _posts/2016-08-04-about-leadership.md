@@ -1,18 +1,18 @@
 ---
 layout: post
-title: "Impact"
+title: "Leadership"
 parent-pages:
-- /about/about-overview/impact
+- /about/about-overview/leadership
 users:
 - funders
 - scientists new to EBI
 - visitors
 goals:
-- Educate on why EBI matters
+- Educate on how EBI is run
+- Educate on who runs EBI
 - Secure funding
-priority: 6
+priority: 8
 role:
-- branding
 - informational
 ---
 

@@ -1,14 +1,16 @@
 ---
 layout: post
-title: "Impact"
+title: "Background"
 parent-pages:
-- /about/about-overview/impact
+- /about/about-overview/background
+- /www.embl.org
 users:
 - funders
 - scientists new to EBI
 - visitors
 goals:
-- Educate on why EBI matters
+- Educate on how EBI came to be
+- Educate on role of EBI
 - Secure funding
 priority: 6
 role:

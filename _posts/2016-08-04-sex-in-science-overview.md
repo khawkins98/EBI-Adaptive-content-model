@@ -2,7 +2,8 @@
 layout: post
 title: "Sex in Science Programme"
 parent-pages:
-- /about/jobs/sex-in-science
+- /about/about-overview/sex-in-science
+- /about/jobs
 users:
 - scientists new to EBI
 - visitors
