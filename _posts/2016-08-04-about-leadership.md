@@ -1,8 +1,10 @@
 ---
 layout: post
-title: "Leadership"
+title: "Leadership and guidance"
 parent-pages:
 - /about/about-overview/leadership
+- /about/people
+- ELIXIR
 users:
 - funders
 - scientists new to EBI
