@@ -3,7 +3,7 @@ layout: post
 title: "Background"
 parent-pages:
 - /about/about-overview/background
-- /www.embl.org
+- www.embl.org
 users:
 - funders
 - scientists new to EBI

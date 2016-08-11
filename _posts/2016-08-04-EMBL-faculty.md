@@ -3,7 +3,7 @@ layout: post
 title: "EMBL Faculty promo image"
 parent-pages:
 - /about/people
-- /www.embl.org
+- www.embl.org
 users:
 - scientists new to EBI
 - visitors

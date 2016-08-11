@@ -3,7 +3,7 @@ layout: post
 title: "Top black section bar"
 parent-pages:
 - /www.ebi.ac.uk
-- /www.embl.org
+- www.embl.org
 - /services
 - /training
 - /research

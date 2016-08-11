@@ -3,7 +3,7 @@ layout: post
 title: "Alumni"
 parent-pages:
 - /about/about-overview/alumni
-- /www.embl.org
+- www.embl.org
 users:
 - scientists new to EBI
 goals:

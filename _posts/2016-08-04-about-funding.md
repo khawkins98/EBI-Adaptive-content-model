@@ -3,7 +3,7 @@ layout: post
 title: "How we are funded"
 parent-pages:
 - /about/about-overview/funding
-- /www.embl.org
+- www.embl.org
 - ELIXIR
 users:
 - funders
