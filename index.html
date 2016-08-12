@@ -23,7 +23,7 @@ body svg {
   stroke-opacity: .5;
   /*stroke-width: .8px;*/
 }
-.link-50 {
+.link-30 {
   fill: none;
   stroke: #666;
 /*  stroke-opacity: .4;
@@ -144,6 +144,10 @@ h4 {
 var width = window.innerWidth,
     height = window.innerHeight - $('header').height();
 
+// global settings
+var widthPageNodes = 0.3,
+    widthContenteNodes = 0.1;
+
 // set the colors we wish to use
 var color = d3.scale.ordinal()
     .range(colorbrewer.Paired[9]);
@@ -159,7 +163,7 @@ var force = d3.layout.force()
     .charge(function(node) {
       // console.log(Math.abs(node.radius));
       // return '-10';
-       return '-' + ( ((Math.abs(node.radius) * Math.abs(node.radius)) * 3) + 140 );
+       return '-' + ( ((Math.abs(node.radius) * Math.abs(node.radius)) * 3) + 90 );
     })
     .linkStrength(function(node) {
        return ( node.value + .5 ) * .5;
@@ -414,7 +418,7 @@ d3.json("data.json", function(error, graph) {
 
         // make a link between the parent page item and the child content item
         var newLink = new Object();
-        newLink.value = 0.1;
+        newLink.value = widthContenteNodes;
         newLink.source = parentPagePosition;
         newLink.target = i;
 
@@ -444,7 +448,7 @@ d3.json("data.json", function(error, graph) {
       // make affiliated link
       if (deepestMatch != 0) {
         var newLink = new Object();
-        newLink.value = 0.5;
+        newLink.value = widthPageNodes;
         newLink.source = deepestMatch;
         newLink.target = i;
         graph.links.push(newLink);
@@ -506,9 +510,9 @@ d3.json("data.json", function(error, graph) {
 
       // console.log(nodes);
 
-  nodes[0].fixed = true; //front
-  nodes[0].x = width*.5;
-  nodes[0].y = height*.25;
+  // nodes[0].fixed = true; //front
+  // nodes[0].x = width*.5;
+  // nodes[0].y = height*.25;
   // console.log(nodes[0].name);
 
   // console.log(nodes);
@@ -679,14 +683,14 @@ d3.json("data.json", function(error, graph) {
           // lineToDraw.splice(0,halfLength);
         } else if (matchTarget === false) {
           // lineToDraw.splice(halfLength,results[i].length);
-          return; //exit
+          // return; //exit
         } 
 
         widthAdjust = (widthAdjust + 1) * widthAdjust; // increase width of each layered line
 
 
         svgInner.insert("path",':first-child').attr("d", d3line(lineToDraw))
-          .style("stroke-width", function(d) {  return ((parentConnection.value + .2) * 2) + widthAdjust })
+          .style("stroke-width", function(d) {  return ((parentConnection.value + 0) * 1) + widthAdjust })
           // .style("stroke", function() { return 'rgba('+hexToRgb(color(nodes[parentNode.index].group))+',.85)'; })
           .style("stroke", function() { return 'rgba('+lineColor+',1)'; })
           .attr("class", function(d) {  return "link-"+(parentConnection.value) * 100 })
@@ -706,11 +710,11 @@ d3.json("data.json", function(error, graph) {
 
       // check if each pair has brand/nav/info roles, and draw corresponding line
       var allRolesOfPairing = (parentConnection.source['role'] || '') + ' ' + (parentConnection.target['role'] || '');
-      doesLinePairHaveProperties(allRolesOfPairing,'info', '234,49,20');
+      doesLinePairHaveProperties(allRolesOfPairing,'info', '0,0,0');
       doesLinePairHaveProperties(allRolesOfPairing,'info',  '255,255,255'); // edge
       // doesLinePairHaveProperties(allRolesOfPairing,'nav',  '90,90,90', 1);
       // doesLinePairHaveProperties(allRolesOfPairing,'nav',  '255,255,255', 1.5); // edge
-      doesLinePairHaveProperties(allRolesOfPairing,'brand','11,146,0');
+      doesLinePairHaveProperties(allRolesOfPairing,'brand','40,152,157');
       // doesLinePairHaveProperties(allRolesOfPairing,'brand',  '255,255,255', 2.5); // edge
 
     }
@@ -718,7 +722,8 @@ d3.json("data.json", function(error, graph) {
     node.append('svg:polygon')
       .attr('points', function(d)  { return scaleMarker(d); })
       .style("fill", function(d)   { if (d.traffic === null) { return 'url(#diagonal-stripe-1)'; } return 'rgba(255,255,255,1)';  })
-      .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
+      // .style("stroke", function(d) { return 'rgba('+hexToRgb(color(d.group))+',.95)';})
+      .style("stroke", function(d) { return 'rgba(0,0,0,.95)';})
       // .attr('stroke', function(d,i) { return color(i)})
       .on("mouseover", function(d){  connectionHighlight(d); nodeHighlightSiblings(d['parent-pages'] || d.title); return info.style("visibility", "visible").html('<h4>'+d.title
         + '</h4>Connections: ' + d.radius
@@ -789,7 +794,11 @@ d3.json("data.json", function(error, graph) {
     // var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
 
     // weight
-    var pointScale = ( (d.radius + 9) * Math.log(d.radius/.2 + 1) ) / 150;
+    var pointScale = ( (d.radius + 8) * Math.log(d.radius/.2 + 1) ) / 250;
+    if (pointScale < 0.12) {
+      pointScale = 0.12;
+    }
+    console.log(pointScale);
 
     // traffic
     // if (d.traffic === null) {
