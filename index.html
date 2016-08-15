@@ -678,13 +678,13 @@ d3.json("data.json", function(error, graph) {
         // how much of the line should we draw?
         // if both matches aren't true then only first or second half of line
         var lineToDraw = results[i].slice(0),
-            halfLength = Math.ceil(results[i].length / 2);    
+            halfLength = Math.ceil(results[i].length / 2);
         if (matchSource === false) {
           // lineToDraw.splice(0,halfLength);
         } else if (matchTarget === false) {
           // lineToDraw.splice(halfLength,results[i].length);
           // return; //exit
-        } 
+        }
 
         widthAdjust = (widthAdjust + 1) * widthAdjust; // increase width of each layered line
 
