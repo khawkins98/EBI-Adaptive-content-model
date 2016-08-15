@@ -159,7 +159,7 @@ var force = d3.layout.force()
       return 30;
       // return ((Math.abs(node.value) * Math.abs(node.value)) * 3) + 100;
     })
-    .gravity(0.025)
+    .gravity(0.015)
     .charge(function(node) {
       // console.log(Math.abs(node.radius));
       // return '-10';
@@ -683,16 +683,21 @@ d3.json("data.json", function(error, graph) {
           // lineToDraw.splice(0,halfLength);
         } else if (matchTarget === false) {
           // lineToDraw.splice(halfLength,results[i].length);
+          // if there's no matching target, then draw a faded line at a thinner width.
+          lineColor = '0,0,0,.1';
+          widthAdjust = widthAdjust - 1;
           // return; //exit
         }
 
         widthAdjust = (widthAdjust + 1) * widthAdjust; // increase width of each layered line
 
+        // console.log(role,matchSource,matchTarget,lineColor);
+
 
         svgInner.insert("path",':first-child').attr("d", d3line(lineToDraw))
           .style("stroke-width", function(d) {  return ((parentConnection.value + 0) * 1) + widthAdjust })
           // .style("stroke", function() { return 'rgba('+hexToRgb(color(nodes[parentNode.index].group))+',.85)'; })
-          .style("stroke", function() { return 'rgba('+lineColor+',1)'; })
+          .style("stroke", function() { return 'rgba('+lineColor+')'; })
           .attr("class", function(d) {  return "link-"+(parentConnection.value) * 100 })
           .attr("data-parentnode", function(d) { return parentNode.index; })
           // .style("marker-end",  "url(#suit)")
@@ -711,10 +716,12 @@ d3.json("data.json", function(error, graph) {
       // check if each pair has brand/nav/info roles, and draw corresponding line
       var allRolesOfPairing = (parentConnection.source['role'] || '') + ' ' + (parentConnection.target['role'] || '');
       doesLinePairHaveProperties(allRolesOfPairing,'info', '0,0,0');
-      doesLinePairHaveProperties(allRolesOfPairing,'info',  '255,255,255'); // edge
-      // doesLinePairHaveProperties(allRolesOfPairing,'nav',  '90,90,90', 1);
-      // doesLinePairHaveProperties(allRolesOfPairing,'nav',  '255,255,255', 1.5); // edge
-      doesLinePairHaveProperties(allRolesOfPairing,'brand','40,152,157');
+      doesLinePairHaveProperties(allRolesOfPairing,'info',  '255,255,255,1'); // edge
+      // if no info connection, maybe a nav?
+      widthAdjust = .5; // reset width
+      doesLinePairHaveProperties(allRolesOfPairing,'nav',  '50,50,50,1');
+      doesLinePairHaveProperties(allRolesOfPairing,'nav',  '255,255,255,1'); // edge
+      doesLinePairHaveProperties(allRolesOfPairing,'brand','40,152,157,1');
       // doesLinePairHaveProperties(allRolesOfPairing,'brand',  '255,255,255', 2.5); // edge
 
     }
@@ -767,7 +774,7 @@ d3.json("data.json", function(error, graph) {
 
   function tickFunction() {
     tickCount++;
-    if (tickCount > 200) {
+    if (tickCount > 110) {
       force.stop();
       tickCount = 100; // so we can restart after a marker is moved
       invokeForceBundling(); // draw the new ForceBundle data

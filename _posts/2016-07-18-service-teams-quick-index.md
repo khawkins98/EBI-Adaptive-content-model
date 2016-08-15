@@ -3,6 +3,7 @@ layout: post
 title: "Service teams quick index"
 parent-pages:
 - /about/people
+- /services
 users:
 - scientists new to EBI
 - scientists familiar with EBI

@@ -2,7 +2,7 @@
 layout: post
 title: "Service data submission"
 parent-pages:
-- /submission
+- /services/submission
 - /services
 users:
 - scientists new to EBI

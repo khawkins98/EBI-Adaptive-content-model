@@ -19,7 +19,6 @@ goals:
 priority: 2
 role:
 - navigation
-- informational
 ---
 
 No further description.

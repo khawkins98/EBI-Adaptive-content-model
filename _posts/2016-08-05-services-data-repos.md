@@ -2,7 +2,7 @@
 layout: post
 title: "EMBL-EBI data repositories"
 parent-pages:
-- /submission
+- /services/submission
 users:
 - scientists new to EBI
 - visitors

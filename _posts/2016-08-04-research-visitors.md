@@ -4,7 +4,7 @@ title: "Visitors and scholars"
 parent-pages:
 - /research
 - /about/jobs
-- /about/jobs/sex-in-science
+- /about/about-overview/sex-in-science
 - /about/jobs/career-profiles
 users:
 - scientists new to EBI
