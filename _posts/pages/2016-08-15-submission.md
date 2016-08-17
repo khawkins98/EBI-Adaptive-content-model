@@ -10,8 +10,8 @@ goals:
 priority: 5
 role:
 - navigation
-Xposition-vertical: 75
-Xposition-horizontal: 50
+position-vertical: 85
+position-horizontal: 60
 ---
 
 No further description.

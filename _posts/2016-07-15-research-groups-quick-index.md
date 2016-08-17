@@ -3,7 +3,6 @@ layout: post
 title: "Research groups quick index"
 date: 2016-07-15
 parent-pages:
-- /research
 - /research/groups
 - /about/people
 users:

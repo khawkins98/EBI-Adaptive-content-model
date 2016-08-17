@@ -6,11 +6,12 @@ parent-pages:
 - /services
 users:
 - scientists new to EBI
-- scientists familiar with EBI
+- visitors
 goals:
 - Inform on submitting data to EBI
 priority: 6
 role:
+- navigation
 - informational
 ---
 
