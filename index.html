@@ -517,53 +517,6 @@ d3.json("data.json", function(error, graph) {
 
   // console.log(nodes);
 
-  // nodes[nodeIndustry].fixed = true;
-  // nodes[nodeIndustry].x = width*.35;
-  // nodes[nodeIndustry].y = height*.75;
-
-  // nodes[nodeEMBL].fixed = true;
-  // nodes[nodeEMBL].x = width*.85;
-  // nodes[nodeEMBL].y = height*.7;
-
-  // nodes[nodePeople].fixed = true;
-  // nodes[nodePeople].x = width*.6;
-  // nodes[nodePeople].y = height*.2;
-
-  // nodes[nodeELIXIR].fixed = true;
-  // nodes[nodeELIXIR].x = width*.32;
-  // nodes[nodeELIXIR].y = height*.9;
-
-  // nodes[nodeRESEARCH].fixed = true;
-  // nodes[nodeRESEARCH].x = width*.85;
-  // nodes[nodeRESEARCH].y = height*.45;
-
-  // nodes[nodeServices].fixed = true;
-  // nodes[nodeServices].x = width*.15;
-  // nodes[nodeServices].y = height*.55;
-
-  // nodes[nodeTraining].fixed = true;
-  // nodes[nodeTraining].x = width*.15;
-  // nodes[nodeTraining].y = height*.3;
-
-  // nodes[nodeAbout].fixed = true;
-  // nodes[nodeAbout].x = width*.5;
-  // nodes[nodeAbout].y = height*.35;
-
-  // nodes[nodeNews].fixed = true;
-  // nodes[nodeNews].x = width*.5;
-  // nodes[nodeNews].y = height*.8;
-
-  // nodes[nodeIntranet].fixed = true;
-  // nodes[nodeIntranet].x = width*.75;
-  // nodes[nodeIntranet].y = height*.1;
-
-  // nodes[nodeSources].fixed = true;
-  // nodes[nodeSources].x = width*.1;
-  // nodes[nodeSources].y = height*.1;
-  // nodes[nodeExits].fixed = true;
-  // nodes[nodeExits].x = width*.9;
-  // nodes[nodeExits].y = height*.1;
-
 
   // Start the force graph
   force.start();
@@ -678,16 +631,18 @@ d3.json("data.json", function(error, graph) {
         // how much of the line should we draw?
         // if both matches aren't true then only first or second half of line
         var lineToDraw = results[i].slice(0),
-            halfLength = Math.ceil(results[i].length / 2);
+            halfLength = Math.ceil(results[i].length / 2);    
         if (matchSource === false) {
           // lineToDraw.splice(0,halfLength);
+          lineColor = '0,0,0,.1';
+          widthAdjust = 0.5;
         } else if (matchTarget === false) {
           // lineToDraw.splice(halfLength,results[i].length);
           // if there's no matching target, then draw a faded line at a thinner width.
           lineColor = '0,0,0,.1';
-          widthAdjust = widthAdjust - 1;
+          widthAdjust = 0.5;
           // return; //exit
-        }
+        } 
 
         widthAdjust = (widthAdjust + 1) * widthAdjust; // increase width of each layered line
 
@@ -695,7 +650,7 @@ d3.json("data.json", function(error, graph) {
 
 
         svgInner.insert("path",':first-child').attr("d", d3line(lineToDraw))
-          .style("stroke-width", function(d) {  return ((parentConnection.value + 0) * 1) + widthAdjust })
+          .style("stroke-width", function(d) {  return (parentConnection.value / 2) + widthAdjust })
           // .style("stroke", function() { return 'rgba('+hexToRgb(color(nodes[parentNode.index].group))+',.85)'; })
           .style("stroke", function() { return 'rgba('+lineColor+')'; })
           .attr("class", function(d) {  return "link-"+(parentConnection.value) * 100 })
@@ -744,7 +699,7 @@ d3.json("data.json", function(error, graph) {
       .on("mousedown", function(d){ svg.on('.zoom', null ); })
       .on("mouseup", function(d){ zoomEnable(); })
       // .on("mousemove", function(){  return info.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); });
+      .on("mouseout", function(d){  nodeHighlightReset(); });
       // .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); return info.style("visibility", "hidden"); });
 
   }
@@ -914,12 +869,14 @@ d3.json("data.json", function(error, graph) {
 
     //Reduce the opacity of all but the neighbouring nodes
     node.style("opacity", function (o) {
-      console.log(d,o);
-        return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+      return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
     });
-    // link.style("opacity", function (o) {
-    //     return d.index==o.source.index | d.index==o.target.index ? 1 : 0.1;
-    // });
+    // d3.selectAll('path').style("opacity",1);
+    d3.selectAll('path').style("opacity", function () {
+      var o = new Array();
+      o.index = $(this).attr("data-parentnode");
+      return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+    });
 
     // Sync with global filters
     evaluateNodeVisibility();
@@ -928,6 +885,8 @@ d3.json("data.json", function(error, graph) {
   // Reset the highlight on mouse out
   function connectionHighlightReset(d) {
     d3.selectAll('path').style("opacity",1);
+
+
     // var tempLines = d3.selectAll("path")[0];
     // for ( y = 0; y < tempLines.length; y++ ) {
     //   d3.select(tempLines[y]).transition().style("opacity", 1);
@@ -1038,7 +997,7 @@ d3.json("data.json", function(error, graph) {
       // Get the active value and associated target property
       var targetValue    = $("option:selected", this).attr("value"),
           targetProperty = $(this).attr("data-target-property");
-      console.log('Looking for nodes with value: ' + targetValue + ', in property: ' + targetProperty);
+      // console.log('Looking for nodes with value: ' + targetValue + ', in property: ' + targetProperty);
       // console.log(event);
 
       if (targetValue != 'null') {
@@ -1057,12 +1016,12 @@ d3.json("data.json", function(error, graph) {
               return 0.1;
             }
           } else {
-            console.log('Node is already faded, no need to evaluate');
+            // console.log('Node is already faded, no need to evaluate');
             return 0.1;
           }
         });
       } else {
-        console.log(targetProperty + ' is null, so not evaluating...')
+        // console.log(targetProperty + ' is null, so not evaluating...')
       }
     });
 
