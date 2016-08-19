@@ -699,7 +699,7 @@ d3.json("data.json", function(error, graph) {
       .on("mousedown", function(d){ svg.on('.zoom', null ); })
       .on("mouseup", function(d){ zoomEnable(); })
       // .on("mousemove", function(){  return info.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px"); })
-      .on("mouseout", function(d){  nodeHighlightReset(); });
+      .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(); });
       // .on("mouseout", function(d){  nodeHighlightReset(); connectionHighlightReset(d); return info.style("visibility", "hidden"); });
 
   }
@@ -883,7 +883,7 @@ d3.json("data.json", function(error, graph) {
   }
 
   // Reset the highlight on mouse out
-  function connectionHighlightReset(d) {
+  function connectionHighlightReset() {
     d3.selectAll('path').style("opacity",1);
 
 
@@ -962,6 +962,7 @@ d3.json("data.json", function(error, graph) {
     if (event == 'reset') {
       console.log('making all nodes visible');
       d3.selectAll('.node').style('opacity', 1);
+      d3.selectAll('path').style('opacity', 1);
       return true;
     }
 
@@ -1024,6 +1025,45 @@ d3.json("data.json", function(error, graph) {
         // console.log(targetProperty + ' is null, so not evaluating...')
       }
     });
+
+    // After toggling visibility of nodes, fade out de-used paths
+    // var linkedByIndex = {};
+    // for (i = 0; i < graph.nodes.length; i++) {
+    //   linkedByIndex[i + "," + i] = 1;
+    // };
+    // graph.links.forEach(function (d) {
+    //   linkedByIndex[d.source.index + "," + d.target.index] = 1;
+    // });
+    //This function looks up whether a pair are neighbours
+    // function neighboring(a, b) {
+    //   return linkedByIndex[a.index + "," + b.index];
+    // }
+
+    //Reduce the opacity of all but the neighbouring nodes
+    var pathsToShow = {};
+    graph.nodes.forEach(function (d) {
+      // console.log(d,node[0][d.index]);
+      if (node[0][d.index].style.opacity != 0.1) {
+        pathsToShow[d.index] = 1;
+        // console.log('opacity',node[0][d.index].style.opacity);
+      }
+      // if (o)
+      // return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+    });
+
+
+    // // d3.selectAll('path').style("opacity",1);
+    d3.selectAll('path').style("opacity", function () {
+      var o = new Array();
+      o.index = $(this).attr("data-parentnode");
+      if (pathsToShow[o.index] === 1) {
+        return 1;
+      } else {
+        return 0.1;
+      }
+      // return neighboring(d, o) | neighboring(o, d) ? 1 : 0.1;
+    });
+
 
   }
 
