@@ -1,3 +1,11 @@
+##v0.3
+
+This version was a first attempt at using Jekyll to generate the JSON and manage the records.
+
+With that achieved, v0.4 is being rolled that incorporates a more wholistic and updated approach which integrates the revised Core Content Models. 
+
+-----
+
 Tooling to visualise EBI content relationships using D3.
 
 Use this explore how content interacts and the types of links between content.
