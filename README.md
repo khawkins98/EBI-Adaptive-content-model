@@ -1,3 +1,8 @@
+## About
+v0.4 - This is the first version that will leverage the matured Core Content Specifications
+
+----
+
 Tooling to visualise EBI content relationships using D3.
 
 Use this explore how content interacts and the types of links between content.
