@@ -1,0 +1,72 @@
+#content.row { margin: 0; padding: 0; }
+body svg {
+  font: 9px verdana, sans-serif;
+}
+.link-10 {
+  fill: none;
+  stroke: #000;
+  stroke-dasharray: 1px 1px;
+  stroke-opacity: .5;
+  /*stroke-width: .8px;*/
+}
+.link-30 {
+  fill: none;
+  stroke: #666;
+/*  stroke-opacity: .4;
+  stroke-width: 1.1px;*/
+}
+
+.node circle:hover {
+  cursor: pointer;
+  opacity: .8;
+}
+
+.node circle.area-circle:hover {
+  cursor: -moz-grab; cursor: -webkit-grab;
+}
+
+.node text {
+  pointer-events: none;
+  position: relative;
+  z-index: 100;
+  color: #222;
+  text-shadow:
+   -1px -1px .1px #fff,
+    1px -1px .1px #fff,
+    -1px 1px .1px #fff,
+     1px 1px .1px #fff;
+}
+.node text.group-1 {
+  text-transform: uppercase;
+}
+.node text.group-2 {
+}
+
+h4 {
+  margin: 0;
+  /*color: #fff;*/
+  font-size: 1rem;
+}
+#info-container {
+  position: absolute;
+  left: 0;
+  top: 250px;
+  width: 250px;
+}
+#info-container .info {
+  font-size: .8rem;
+}
+
+.node-information {
+  width: 80%;
+  background: #fff;
+  position: fixed;
+  z-index: 100;
+  display: none;
+  margin: 8vw 9%;
+  padding: 1vw 1%;
+  border: 1px solid rgba(0,0,0,.5);
+}
+
+.highlight polygon {
+}
