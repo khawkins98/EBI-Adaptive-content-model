@@ -7,12 +7,12 @@ layout: null
   {% for post in posts_processed %}
     {
       "title": "{{ post.title }}",
-      "parent-pages":  "{% for parent-page in post.parent-pages %}{{ parent-page }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
-      "users": "{% for user in post.users %}{{ user }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
+      "constituent-pages":  "{% for constituent-pages in post.constituent-pages %}{{ constituent-pages }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
+      "audience": "{% for audience in post.audience %}{{ audience }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "goals": "{% for goal in post.goals %}{{ goal }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
-      "role": "{% for role in post.role %}{{ role }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
-      "priority": "{{ post.priority }}",
-      "database-url": "{{ post.url }}"
+      "paths-in": "{% for paths-in in post.paths-in %}{{ paths-in }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
+      "paths-out": "{% for paths-out in post.paths-out %}{{ paths-out }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
+      "record-url": "{% for record-url in post.record-url %}{{ record-url }}{% unless forloop.last %}, {% endunless %}{% endfor %}"
     }{% unless forloop.last %},{% endunless %}
   {% endfor %}
 ],
