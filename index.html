@@ -5,55 +5,18 @@ group: "in_local_navigation"
 order: 1
 ---
 
+<svg class="visulisation" width="900" height="600"></svg>
+
+
 <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
-<script src="https://d3js.org/d3.v3.min.js"></script>
-<script type="text/javascript" src="vendor/ForceBundle/d3-ForceEdgeBundling.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="vendor/colorbrewer/colorbrewer.js"></script>
 <link rel="stylesheet" href="vendor/colorbrewer/colorbrewer.css" type="text/css" media="all">
 
 <script src="static/visulisation.js"></script>
 <link rel="stylesheet" href="static/visulisation.css" type="text/css" media="all">
 
-<div class="node-information"></div>
 
-<div id="info-container" class="callout">
-  <form>
-    <div class="row">
-      <div class="small-12 columns">
-        <select name="select" data-target-property="role">
-          <option value="null" selected>Role</option>
-          <option value="navig">Navigation</option>
-          <option value="inform">Informational</option>
-          <option value="brand">Branding</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="small-12 columns">
-        <select name="select" data-target-property="users">
-          <option value="null" selected>Users</option>
-          <option value="new">scientists new to EBI</option>
-          <option value="famil">scientists familiar with EBI</option>
-          <option value="visi">Visitors</option>
-          <option value="funder">Funders</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="small-12 columns">
-        <select name="select" data-target-property="goals">
-          <option value="null" selected>Goals</option>
-          <option value="xxxx">??</option>
-          <option value="inform">Informational</option>
-          <option value="brand">Branding</option>
-        </select>
-      </div>
-    </div>
-
-  </form>
-</div>
 
 <!--
   Handy pattern fills:
