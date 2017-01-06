@@ -16,7 +16,7 @@ d3.json("data.json", function(error, graph) {
   // We programatically generate the links 
   // by pairing the inward/outward paths to constituent pages
   graph.links.pop(); // empty any test data
-  function findConstituentPage(pathIn,childPageTitle) {
+  function findConstituentPage(pathIn,childPageTitle,direction) {
     if (pathIn.indexOf('www.ebi.ac.uk') >= 0) {
       pathIn = pathIn.slice(('www.ebi.ac.uk').length);
     }
@@ -44,6 +44,7 @@ d3.json("data.json", function(error, graph) {
           // first time, so make a new link...
           var newLink = new Object();
             newLink.title = newLinkTitle;      
+            newLink.direction = direction;      
             newLink.source = childPageTitle;
             newLink.target = graph.nodes[i]['title'];
             newLink.value = 0.2;
@@ -61,7 +62,12 @@ d3.json("data.json", function(error, graph) {
     var pathsIn = graph.nodes[i]['paths-in'].split(', ');
     // evaluate each path from the page
     for (var j = 0; j < pathsIn.length; j++) {
-      findConstituentPage(pathsIn[j],graph.nodes[i]['title']);
+      findConstituentPage(pathsIn[j],graph.nodes[i]['title'],'paths-in');
+    }
+    var pathsOut = graph.nodes[i]['paths-out'].split(', ');
+    // evaluate each path from the page
+    for (var j = 0; j < pathsOut.length; j++) {
+      findConstituentPage(pathsOut[j],graph.nodes[i]['title'],'paths-out');
     }
   }
 
@@ -78,7 +84,8 @@ d3.json("data.json", function(error, graph) {
     .selectAll("line")
     .data(graph.links)
     .enter().append("line")
-      .attr("stroke-width", function(d) { return Math.sqrt(d.value); });
+      .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
+      .attr("class", function(d) { return d['direction']; });
 
   var node = svg.append("g")
       .attr("class", "nodes")
