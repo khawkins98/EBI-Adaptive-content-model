@@ -1,8 +1,12 @@
 ---
 layout: post
 title: "News"
+distance-from-core: 2
+quadrant: 1
 record-url:
 - https://docs.google.com/document/d/1M-vOKSzWFqiL0lrwZwdt9m2n7jkBVyMcSrFw843RuVs
+analytics-url:
+- to-come
 constituent-pages:
 - /about/news
 - /about/news/press-releases
