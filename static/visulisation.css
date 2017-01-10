@@ -11,3 +11,8 @@
 .labels text {
   font-size: 11px;
 }
+
+
+/* hide orbit fixtures */
+.links line.orbit,
+.labels text.orbit { display: none; }
