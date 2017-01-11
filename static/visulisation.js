@@ -292,7 +292,21 @@ function dragended(d) {
 
 // simple reusable function to format content
 function wrapInHtmlTag(content,tag) {
+  if (tag == 'label') {
+    return '<div><span class="ebi-color label uppercase">' + content + '</span></div>';
+  }
   return '<' + tag + '>' + content + '</' + tag + '>';
+}
+
+function commasToBreaks(content) {
+  function replacement(str, p1, offset, s) {
+    return '<br/>';
+  }
+  var pattern = /, /g;
+  content = content.replace(pattern, replacement);
+  // remove any notations about orbit urls...
+  content = content.split('/orbit')[0];
+  return content;
 }
 
 // Create Event Handlers for mouse
@@ -302,13 +316,18 @@ function handleMouseOver(d, i) {  // Add interactivity
 
   var infoBox =  wrapInHtmlTag(d.title,'h4');
       infoBox += wrapInHtmlTag(d['content'],'p');
-      infoBox += wrapInHtmlTag('constituent-pages: ' + d['constituent-pages'],'p');
-      infoBox += '<a href="' + d['record-url'] + '" class="button readmore" target="_blank">View the core content record</a> ';
-      infoBox += '<a href="' + d['analytics-url'] + '" class="button readmore" target="_blank">View the analytics report</a> ';
-      infoBox += wrapInHtmlTag('goals: ' + d['goals'],'p');
-      infoBox += wrapInHtmlTag('audience: ' + d['audience'],'p');
-      infoBox += wrapInHtmlTag('paths-in: ' + d['paths-in'],'p');
-      infoBox += wrapInHtmlTag('paths-out: ' + d['paths-out'],'p');
+      infoBox += wrapInHtmlTag('constituent pages','label');
+      infoBox += wrapInHtmlTag(commasToBreaks(d['constituent-pages']),'p');
+      infoBox += '<a href="' + d['record-url'] + '" class="button readmore small" target="_blank">View the core content record</a> ';
+      infoBox += '<a href="' + d['analytics-url'] + '" class="button readmore small" target="_blank">View the analytics report</a> ';
+      infoBox += wrapInHtmlTag('goals','label');
+      infoBox += wrapInHtmlTag(commasToBreaks(d['goals']),'p');
+      infoBox += wrapInHtmlTag('audience','label');
+      infoBox += wrapInHtmlTag(commasToBreaks(d['audience']),'p');
+      infoBox += wrapInHtmlTag('paths-in','label');
+      infoBox += wrapInHtmlTag(commasToBreaks(d['paths-in']),'p');
+      infoBox += wrapInHtmlTag('paths-out','label');
+      infoBox += wrapInHtmlTag(commasToBreaks(d['paths-out']),'p');
 
   $('#infobreakout').html(infoBox);
 }
