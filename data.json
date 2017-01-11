@@ -7,6 +7,7 @@ layout: null
   {% for post in posts_processed %}
     {
       "title": "{{ post.title }}",
+      "content": "{{ post.content | rstrip }}",
       "constituent-pages":  "{% for constituent-pages in post.constituent-pages %}{{ constituent-pages }}{% unless forloop.last %}, {% endunless %}{% endfor %}",
       "distance-from-core": "{{ post.distance-from-core }}",
       "quadrant": "{{ post.quadrant }}",
