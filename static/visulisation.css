@@ -1,18 +1,50 @@
-.links line {
+.links path {
   stroke: #999;
+  fill: none;
   stroke-opacity: 0.6;
+  stroke-width: 1.5px; 
+}
+
+.links path.paths-in {
+  marker-start: none;
+}
+
+.links path.paths-out {
+  stroke-opacity: 0.3;
+  stroke-dasharray: 1.5px;  
+  marker-end: none;
 }
 
 .nodes circle {
-  stroke: #fff;
+  stroke: #333;
   stroke-width: 1.5px;
+  fill: #fff;
+}
+
+.labels text:hover,
+.nodes circle:hover {
+  cursor: pointer;
 }
 
 .labels text {
   font-size: 11px;
+  fill: #222;
 }
 
 
+marker#end path {
+  stroke: #fff;
+  fill: #999;
+  stroke-width: 2.5px;
+}
+
+marker#start path {
+  stroke: #fff;
+  fill: #999;
+  stroke-width: 2.5px;
+  opacity: .5;
+}
+
 /* hide orbit fixtures */
-.links line.orbit,
+.links path.orbit,
 .labels text.orbit { display: none; }

@@ -5,7 +5,7 @@ var svg = d3.select("svg"),
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
-    .force("link", d3.forceLink().distance(1).iterations(3)
+    .force("link", d3.forceLink().distance(0).iterations(1)
     // .force("link", d3.forceLink()
     .id(function(d) { return d.title; }))
     // .distance( function(d) {
@@ -46,7 +46,7 @@ d3.json("data.json", function(error, graph) {
 
   function generateBindingCircles () {
     // to make our orbits, we generate "invisible" (unthemed) data points
-    var defaultObritSize = 300; // the radius
+    var defaultObritSize = 400; // the radius
     var orbits = 2; // the number of rings
     var quadrants = 6; // the number of slices for each orbit
 
@@ -93,14 +93,14 @@ d3.json("data.json", function(error, graph) {
       // is there a pairing?
       if ($.inArray(path,pairablePages) >= 0) {
         var parentPageTitle = graph.nodes[i]['title'];
-        var newLinkTitle = childPageTitle + ' -> ' + parentPageTitle;
+        var newLinkTitle = parentPageTitle + ' -> ' + childPageTitle;
 
         // don't pair yourself
         if (childPageTitle == parentPageTitle) {
           return;
         }
 
-        console.log('match found between:',childPageTitle, parentPageTitle, path, graph.nodes[i]['constituent-pages'], direction);
+        // console.log('match found between:',childPageTitle, parentPageTitle, path, graph.nodes[i]['constituent-pages'], direction);
 
         // a match, but if we have already made this link, just make the bond stronger
         graph.links.forEach(function(e){
@@ -139,12 +139,12 @@ d3.json("data.json", function(error, graph) {
     var pathsIn = graph.nodes[i]['paths-in'].split(', ');
     // evaluate each path from the page
     for (var j = 0; j < pathsIn.length; j++) {
-      findConstituentPage(pathsIn[j],graph.nodes[i]['title'],'paths-in');
+      findConstituentPage(pathsIn[j],graph.nodes[i]['title'],'paths-out');
     }
     var pathsOut = graph.nodes[i]['paths-out'].split(', ');
     // evaluate each path from the page
     for (var j = 0; j < pathsOut.length; j++) {
-      findConstituentPage(pathsOut[j],graph.nodes[i]['title'],'paths-out');
+      findConstituentPage(pathsOut[j],graph.nodes[i]['title'],'paths-in');
     }
   }
 
@@ -157,19 +157,23 @@ d3.json("data.json", function(error, graph) {
       return 1;
     }
 
+    return 40;
+
     var massOfUrls = node['constituent-pages'].split(', ').length + 1;
     return (massOfUrls +10) * 3;
   }
-
 
 
   var link = svg.append("g")
       .attr("class", "links")
     .selectAll("line")
     .data(graph.links)
-    .enter().append("line")
+    .enter().append("svg:path")
       .attr("stroke-width", function(d) { return Math.sqrt(d.value); })
+      .attr("marker-end", "url(#end)")
+      .attr("marker-start", "url(#start)")
       .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return d['direction']; });
+
 
   var node = svg.append("g")
       .attr("class", "nodes")
@@ -179,6 +183,8 @@ d3.json("data.json", function(error, graph) {
       .attr("r", function(d) { return calculateNodeMass(d); })
       //d['distance-from-core']
       .attr("fill", function(d) { return color(d.group); })
+      .on("mouseover", handleMouseOver)
+      .on("mouseout", handleMouseOut)
       .call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
@@ -193,6 +199,36 @@ d3.json("data.json", function(error, graph) {
       .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return 'node'; })
       .style("text-anchor", "middle");
 
+
+  // marker arrows
+  // via http://bl.ocks.org/d3noob/5141278
+  // build the arrow.
+  svg.append("svg:defs").selectAll("marker")
+      .data(["end"])      // Different link/path types can be defined here
+    .enter().append("svg:marker")    // This section adds in the arrows
+      .attr("id", String)
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", 42)
+      .attr("refY", -2.5)
+      .attr("markerWidth", 8)
+      .attr("markerHeight", 8)
+      .attr("orient", "auto")
+    .append("svg:path")
+      .attr("d", "M0,-5L10,0L0,5");
+
+  svg.append("svg:defs").selectAll("marker")
+      .data(["start"])      // Different link/path types can be defined here
+    .enter().append("svg:marker")    // This section adds in the arrows
+      .attr("id", String)
+      .attr("viewBox", "0 -5 10 10")
+      .attr("refX", -48)
+      .attr("refY", -3.5)
+      .attr("markerWidth", 7)
+      .attr("markerHeight", 7)
+      .attr("orient", "auto")
+    .append("svg:path")
+      .attr("d", "M0,-5L10,0L0,5");
+
   node.append("title")
       .text(function(d) { return d.title; });
 
@@ -206,22 +242,34 @@ d3.json("data.json", function(error, graph) {
 
   function ticked() {
     node
-        .attr("cx", function(d) { return d.x })
-        .attr("cy", function(d) { return d.y });
+      .attr("cx", function(d) { return d.x })
+      .attr("cy", function(d) { return d.y });
 
-    link
-        // .attr("x1", function(d) { return enforceOrbits(d.source.x,d.source.y,d.source['distance-from-core'], 'x'); })
-        // .attr("y1", function(d) { return enforceOrbits(d.source.x,d.source.y,d.source['distance-from-core'], 'y'); })
-        // .attr("x2", function(d) { return enforceOrbits(d.target.x,d.target.y,d.target['distance-from-core'], 'x'); })
-        // .attr("y2", function(d) { return enforceOrbits(d.target.x,d.target.y,d.target['distance-from-core'], 'y'); });
-        .attr("x1", function(d) { return d.source.x; })
-        .attr("y1", function(d) { return d.source.y; })
-        .attr("x2", function(d) { return d.target.x; })
-        .attr("y2", function(d) { return d.target.y; });
+    link.attr("d", function(d) {
+      var dx = d.target.x - d.source.x,
+          dy = d.target.y - d.source.y,
+          dr = Math.sqrt(dx * dx + dy * dy)*2;
+      return "M" + 
+        d.source.x + "," + 
+        d.source.y + "A" + 
+        dr + "," + dr + " 0 0,1 " + 
+        d.target.x + "," + 
+        d.target.y;
+    });
+
+    // link
+    //     // .attr("x1", function(d) { return enforceOrbits(d.source.x,d.source.y,d.source['distance-from-core'], 'x'); })
+    //     // .attr("y1", function(d) { return enforceOrbits(d.source.x,d.source.y,d.source['distance-from-core'], 'y'); })
+    //     // .attr("x2", function(d) { return enforceOrbits(d.target.x,d.target.y,d.target['distance-from-core'], 'x'); })
+    //     // .attr("y2", function(d) { return enforceOrbits(d.target.x,d.target.y,d.target['distance-from-core'], 'y'); });
+    //     .attr("x1", function(d) { return d.source.x; })
+    //     .attr("y1", function(d) { return d.source.y; })
+    //     .attr("x2", function(d) { return d.target.x; })
+    //     .attr("y2", function(d) { return d.target.y; });
     
     label
-        .attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; });
+      .attr("x", function(d) { return d.x; })
+      .attr("y", function(d) { return d.y; });
   }
 });
 
@@ -241,3 +289,32 @@ function dragended(d) {
   d.fx = null;
   d.fy = null;
 }
+
+// simple reusable function to format content
+function wrapInHtmlTag(content,tag) {
+  return '<' + tag + '>' + content + '</' + tag + '>';
+}
+
+// Create Event Handlers for mouse
+function handleMouseOver(d, i) {  // Add interactivity
+
+  // console.log(d,i);
+
+  var infoBox =  wrapInHtmlTag(d.title,'h4');
+      infoBox += wrapInHtmlTag(d['content'],'p');
+      infoBox += wrapInHtmlTag('constituent-pages: ' + d['constituent-pages'],'p');
+      infoBox += '<a href="' + d['record-url'] + '" class="button readmore" target="_blank">View the core content record</a> ';
+      infoBox += '<a href="' + d['analytics-url'] + '" class="button readmore" target="_blank">View the analytics report</a> ';
+      infoBox += wrapInHtmlTag('goals: ' + d['goals'],'p');
+      infoBox += wrapInHtmlTag('audience: ' + d['audience'],'p');
+      infoBox += wrapInHtmlTag('paths-in: ' + d['paths-in'],'p');
+      infoBox += wrapInHtmlTag('paths-out: ' + d['paths-out'],'p');
+
+  $('#infobreakout').html(infoBox);
+}
+
+function handleMouseOut(d, i) {
+  // nothing for now
+}
+
+
