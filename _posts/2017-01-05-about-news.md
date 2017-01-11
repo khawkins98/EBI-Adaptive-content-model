@@ -2,7 +2,7 @@
 layout: post
 title: "News"
 distance-from-core: 2
-quadrant: 1
+quadrant: 3
 record-url:
 - https://docs.google.com/document/d/1M-vOKSzWFqiL0lrwZwdt9m2n7jkBVyMcSrFw843RuVs
 analytics-url:
@@ -44,6 +44,7 @@ paths-out:
 - Sign up for the newsletter
 - Explore the website
 - Click on any link in the article
+- www.ebi.ac.uk/services/type
 ---
 
 NEED STATEMENT ABOUT MAIN GOAL OF THIS ECOSYSTEM.

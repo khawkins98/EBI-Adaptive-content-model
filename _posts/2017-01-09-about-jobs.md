@@ -40,7 +40,7 @@ paths-out:
 - www.embl.de/jobs/searchjobs
 - Subscribe to newsletter
 - Social media/e-mail share
-- www.ebi.ac.uk/
+- Explore the site
 - www.ebi.ac.uk/about
 ---
 
