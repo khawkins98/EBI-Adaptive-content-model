@@ -16,10 +16,42 @@
 }
 
 .nodes circle {
-  stroke: #333;
-  stroke-width: 1.5px;
-  fill: #fff;
+  stroke: #FFF;
+  stroke-width: 1px;
+  fill: rgba(255,255,255,1);
+  opacity: .5;
+  /*fill: rgba(0,0,0,.1);*/
 }
+
+.nodes circle.visitor-familiar-with-embl-ebi,
+.nodes circle.general-visitor-to-embl-ebi,
+.nodes circle.general-familiar,
+.nodes circle.general-new,
+.nodes circle.general { stroke: rgba(0,124,130,.7); }
+
+.nodes circle.educators,
+.nodes circle.students,
+.nodes circle.technology-job-seeker,
+.nodes circle.scientist-new-to-embl-ebi,
+.nodes circle.scientists-external { stroke: rgba(168,200,19,.7); }
+
+.nodes circle.scientist-familiar-with-embl-ebi,
+.nodes circle.scientists-internal { stroke: rgba(233,180,0,.7); }
+ 
+.nodes circle.funder-or-industry-partner,
+.nodes circle.journalists,
+.nodes circle.funders,
+.nodes circle.industry { stroke: rgba(0,134,180,.7); }
+
+
+.ebi-background { background: rgb(0,124,130); }
+.services-background { background: rgb(2,100,105); }
+.research-background { background: rgb(168,200,19); }
+.training-background { background: rgb(233,180,0); }
+.industry-background { background: rgb(0,134,180); }
+.elixir-background { background: rgb(251,106,42); }
+.white-background { background: rgb(255,255,255); }
+
 
 .labels text:hover,
 .nodes circle:hover {
@@ -28,7 +60,7 @@
 
 .labels text {
   font-size: 11px;
-  fill: #222;
+  fill: #666;
 }
 
 

@@ -2,6 +2,10 @@ var svg = d3.select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
+function rand1toN(N){
+  return Math.floor( Math.random() * N );
+}
+
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
 var simulation = d3.forceSimulation()
@@ -175,21 +179,47 @@ d3.json("data.json", function(error, graph) {
       .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return d['direction']; });
 
 
+  // make the nodes.
   var node = svg.append("g")
       .attr("class", "nodes")
     .selectAll("circle")
     .data(graph.nodes)
-    .enter().append("circle")
-      .attr("r", function(d) { return calculateNodeMass(d); })
-      //d['distance-from-core']
-      .attr("fill", function(d) { return color(d.group); })
-      .on("mouseover", handleMouseOver)
+    .enter().append("g").attr("class", "node-group");
+
+    // infobox
+    node.on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut)
-      .call(d3.drag()
+
+
+    // invoke dragability
+    node.call(d3.drag()
           .on("start", dragstarted)
           .on("drag", dragged)
           .on("end", dragended));
 
+    // the node dots to show each user group
+    // node.append("circle")
+    //   .attr("r", function(d) { return calculateNodeMass(d); })
+    //   //d['distance-from-core']
+    //   .attr("fill", function(d) { return 'green'; });
+
+    node.html(function(d) {
+      var output = '';
+      if (d.audience) {
+        var audienceMembers = d.audience.split(',');
+        var radius = calculateNodeMass(d);
+        for (var i = 0; i < audienceMembers.length; i++) {
+          audienceMembers[i] = audienceMembers[i].replace(/[\W_]+/g," ").trim().toLowerCase().replace(/[\W_]+/g,"-"); // cleanup label to text class
+          output += '<circle transform="translate(' + (rand1toN(16)-8)  + ',' + (rand1toN(16)-8) + ')" r="' + radius + '" class="' + audienceMembers[i] + '"></circle>';
+        }
+      }
+
+      return output;
+    });
+
+
+
+  // add text labels
   var label = svg.append("g")
       .attr("class", "labels")
     .selectAll("circle")
@@ -242,8 +272,9 @@ d3.json("data.json", function(error, graph) {
 
   function ticked() {
     node
-      .attr("cx", function(d) { return d.x })
-      .attr("cy", function(d) { return d.y });
+      .attr("transform",function(d) { return "translate(" + d.x + "," + d.y +")" });
+      // .attr("x", function(d) { return d.x })
+      // .attr("y", function(d) { return d.y });
 
     link.attr("d", function(d) {
       var dx = d.target.x - d.source.x,

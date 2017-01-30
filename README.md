@@ -9,9 +9,9 @@ Use this explore how content interacts and the types of links between content.
 
 Legend:
 * Size: Reflects page views
-* Colors: show major cluster
+* Color blots: show user types
 * Solid lines: parent-child relationships, color indicates parent group
-* Dahsed lines: tagental but important relationships
+* Dahsed lines: tagental but important relationships (page exits)
 * Polygons with slash: where page view data is not availible
 
 
