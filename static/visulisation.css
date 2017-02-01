@@ -62,12 +62,11 @@
 .white-background { background: rgb(255,255,255); }
 
 
-.labels text:hover,
 .nodes circle:hover {
   cursor: pointer;
 }
 
-.labels text {
+text.label {
   font-size: 11px;
   fill: #666;
 }
@@ -87,29 +86,42 @@ marker#start path {
 }
 
 /* hide orbit fixtures */
-.links path.orbit,
-.labels text.orbit { display: none; }
+.links path.orbit { display: none; }
 
 /* legend */
 .legend {
   position: absolute;
   top: 300px;
   background: #fff;
-  border: .5px solid #666;
-  padding: 1rem;
+  border: .5px solid #EEE;
+  padding: .75rem 1rem .5rem .75rem;
+  line-height: 1.5rem;
 }
-.legend a { 
+.legend a.toggle { 
   display: block; 
+  border-bottom: none;
 }
 
-.legend a:before { 
+.legend a.toggle:before { 
   content: ".";
+  text-align: center;
   display: inline-block;
   width: 1rem;
   line-height: 1rem;
   height: 1rem;
-  background-color: #999;
-  color: #999;
-  margin-right: .2rem;
-
+  background-color: #FFF;
+  color: #FFF;
+  border: 1.5px solid #ddd;
+  border-radius: 1rem;
+  margin-right: .4rem;
 }
+
+a.toggle.general:before { border-color: rgba(0,124,130,.7); }
+a.toggle.scientisits-new:before { border-color: rgba(168,200,19,.7); }
+a.toggle.scientisits-familiar:before { border-color: rgba(233,180,0,.7); }
+a.toggle.professional:before { border-color: rgba(0,134,180,.7); }
+
+a.toggle.off.general:before,
+a.toggle.off.scientisits-new:before,
+a.toggle.off.scientisits-familiar:before,
+a.toggle.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }

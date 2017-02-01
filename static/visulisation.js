@@ -214,6 +214,19 @@ d3.json("data.json", function(error, graph) {
           audienceMembers[i] = audienceMembers[i].replace(/[\W_]+/g," ").trim().toLowerCase().replace(/[\W_]+/g,"-"); // cleanup label to text class
           output += '<circle transform="translate(' + (rand1toN(16)-8)  + ',' + (rand1toN(16)-8) + ')" r="' + radius + '" class="' + audienceMembers[i] + '"></circle>';
         }
+
+        // add text labels
+        output += '<text class="label" style="text-anchor: middle;">' + d.title + '</text>';
+
+        // var label = svg.append("g")
+        //     .attr("class", "labels")
+        //   .selectAll("circle")
+        //   .data(graph.nodes)
+        //   .enter().append("text")
+        //     .text(function(d) { return d.title; })
+        //     .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return 'node'; })
+        //     .style("text-anchor", "middle");
+
         output = '<g class="inner">' + output + '</g>';
       }
 
@@ -222,15 +235,15 @@ d3.json("data.json", function(error, graph) {
 
 
 
-  // add text labels
-  var label = svg.append("g")
-      .attr("class", "labels")
-    .selectAll("circle")
-    .data(graph.nodes)
-    .enter().append("text")
-      .text(function(d) { return d.title; })
-      .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return 'node'; })
-      .style("text-anchor", "middle");
+
+  // var label = svg.append("g")
+  //     .attr("class", "labels")
+  //   .selectAll("circle")
+  //   .data(graph.nodes)
+  //   .enter().append("text")
+  //     .text(function(d) { return d.title; })
+  //     .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return 'node'; })
+  //     .style("text-anchor", "middle");
 
 
   // marker arrows
@@ -301,9 +314,9 @@ d3.json("data.json", function(error, graph) {
     //     .attr("x2", function(d) { return d.target.x; })
     //     .attr("y2", function(d) { return d.target.y; });
     
-    label
-      .attr("x", function(d) { return d.x; })
-      .attr("y", function(d) { return d.y; });
+    // label
+    //   .attr("x", function(d) { return d.x; })
+    //   .attr("y", function(d) { return d.y; });
   }
 });
 
