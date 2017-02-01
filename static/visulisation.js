@@ -49,7 +49,7 @@ d3.json("data.json", function(error, graph) {
 
 
   function generateBindingCircles () {
-    // to make our orbits, we generate "invisible" (unthemed) data points
+    // to construct our orbits, we generate "invisible" (unthemed) data points
     var defaultObritSize = 400; // the radius
     var orbits = 2; // the number of rings
     var quadrants = 6; // the number of slices for each orbit
@@ -67,7 +67,7 @@ d3.json("data.json", function(error, graph) {
           bindingCirleNode['paths-out'] = '/'+circleTitle+'';
           bindingCirleNode['constituent-pages'] = '';
           bindingCirleNode.fx = (width/2)  + (defaultObritSize * orbitStep) * Math.cos((degreeChunk*i) * Math.PI/180);
-          bindingCirleNode.fy = (height/2) + (defaultObritSize * orbitStep) * Math.sin((degreeChunk*i) * Math.PI/180);
+          bindingCirleNode.fy = (height/2.6) + (defaultObritSize * orbitStep) * Math.sin((degreeChunk*i) * Math.PI/180);
 
         graph.nodes.push(bindingCirleNode);      
       }
@@ -197,21 +197,24 @@ d3.json("data.json", function(error, graph) {
           .on("drag", dragged)
           .on("end", dragended));
 
-    // the node dots to show each user group
     // node.append("circle")
     //   .attr("r", function(d) { return calculateNodeMass(d); })
     //   //d['distance-from-core']
     //   .attr("fill", function(d) { return 'green'; });
 
+    // the node dots to show each user group
     node.html(function(d) {
       var output = '';
       if (d.audience) {
         var audienceMembers = d.audience.split(',');
         var radius = calculateNodeMass(d);
+        // add one under circle to mask arrows
+        output += '<circle r="' + (radius - 5) + '" class="white-background"></circle>';
         for (var i = 0; i < audienceMembers.length; i++) {
           audienceMembers[i] = audienceMembers[i].replace(/[\W_]+/g," ").trim().toLowerCase().replace(/[\W_]+/g,"-"); // cleanup label to text class
           output += '<circle transform="translate(' + (rand1toN(16)-8)  + ',' + (rand1toN(16)-8) + ')" r="' + radius + '" class="' + audienceMembers[i] + '"></circle>';
         }
+        output = '<g class="inner">' + output + '</g>';
       }
 
       return output;
@@ -345,6 +348,10 @@ function handleMouseOver(d, i) {  // Add interactivity
 
   // console.log(d,i);
 
+  // activate hover
+  d3.select(this).classed("active", true);
+
+  // Show the data record
   var infoBox =  wrapInHtmlTag(d.title,'h4');
       infoBox += wrapInHtmlTag(d['content'],'p');
       infoBox += wrapInHtmlTag('constituent pages','label');
@@ -364,7 +371,8 @@ function handleMouseOver(d, i) {  // Add interactivity
 }
 
 function handleMouseOut(d, i) {
-  // nothing for now
+  // deactivate hover
+  d3.select(this).classed("active", false);
 }
 
 
