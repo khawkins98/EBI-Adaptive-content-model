@@ -1,26 +1,26 @@
 ---
 layout: post
-title: "Services"
-distance-from-core: 1
+title: "Service team"
+distance-from-core: 2
 quadrant: 5
 record-url:
-- to-come
+- n/a
 analytics-url:
-- to-come
+- n/a
 constituent-pages:
-- /services
-- /services/type
+- /services/service-team-url
 goals:
-- 1. To come
+- n/a
 audience:
 - Scientist new to EMBL-EBI
 - Scientist familiar with EMBL-EBI
 paths-in:
 - Direct traffic/bookmark
 - Web search (Google)
-- www.ebi.ac.uk/
+- www.ebi.ac.uk/services
+- www.ebi.ac.uk/about/news
 paths-out:
-- Individual service
+- n/a
 ---
 
-**manufactured for example**
+A markers for the various services

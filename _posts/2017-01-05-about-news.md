@@ -2,7 +2,7 @@
 layout: post
 title: "News"
 distance-from-core: 2
-quadrant: 3
+quadrant: 0
 record-url:
 - https://docs.google.com/document/d/1M-vOKSzWFqiL0lrwZwdt9m2n7jkBVyMcSrFw843RuVs
 analytics-url:
@@ -33,13 +33,13 @@ audience:
 paths-in:
 - E-mail
 - Social media
-- www.ebi.ac.uk/service
 - Web search (Google)
 - www.ebi.ac.uk/
 - Wire service
 paths-out:
 - Go to the paper
 - www.ebi.ac.uk/research
+- www.ebi.ac.uk/services/service-team-url
 - Contact the news team
 - Sign up for the newsletter
 - Explore the website
