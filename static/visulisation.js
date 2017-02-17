@@ -18,7 +18,7 @@ var simulation = d3.forceSimulation()
     // }).strength(0.1));
     .force("charge", d3.forceManyBody().strength(function(d){
       if (d.title.indexOf('orbit') >= 0 ) { return 50; } 
-      return -50;
+      return -1000;
     }));
     // .force("charge", d3.forceX( function(d,i){
     //   console.log(d,i);
@@ -50,7 +50,7 @@ d3.json("data.json", function(error, graph) {
 
   function generateBindingCircles () {
     // to construct our orbits, we generate "invisible" (unthemed) data points
-    var defaultObritSize = 400; // the radius
+    var defaultObritSize = 450; // the radius
     var orbits = 2; // the number of rings
     var quadrants = 6; // the number of slices for each orbit
 
@@ -110,26 +110,30 @@ d3.json("data.json", function(error, graph) {
         graph.links.forEach(function(e){
          if (e['title'] == newLinkTitle) {
           e['value'] += 0.1;
-          newLinkTitle = 'abort';
+          return;
          }
         });
 
-        if (newLinkTitle != 'abort') {
-          // first time, so make a new link...
-          var newLink = new Object();
-            newLink.title = newLinkTitle;      
-            newLink.direction = direction;      
+        // first time, so make a new link...
+        var newLink = new Object();
+          newLink.title = newLinkTitle;      
+          newLink.direction = direction;
+          if (direction == 'paths-in') {
+            newLink.source = graph.nodes[i]['title'];
+            newLink.target = childPageTitle;
+          } else if (direction == 'paths-out') {
             newLink.source = childPageTitle;
             newLink.target = graph.nodes[i]['title'];
-            newLink.value = 0.2;
 
-            if (newLinkTitle.indexOf('Quadrant') > 0) {
-              // anchor links are stronger ..
-              newLink.value = 1;
-            }
+          }
+          newLink.value = 0.2;
 
-          graph.links.push(newLink);
-        }
+          if (newLinkTitle.indexOf('Quadrant') > 0) {
+            // anchor links are stronger ..
+            newLink.value = 1;
+          }
+
+        graph.links.push(newLink);
 
       }
 
@@ -141,14 +145,14 @@ d3.json("data.json", function(error, graph) {
 
   for (var i = 0; i < graph.nodes.length; i++) {
     var pathsIn = graph.nodes[i]['paths-in'].split(', ');
-    // evaluate each path from the page
+    // evaluate each path INTO the page
     for (var j = 0; j < pathsIn.length; j++) {
-      findConstituentPage(pathsIn[j],graph.nodes[i]['title'],'paths-out');
+      findConstituentPage(pathsIn[j],graph.nodes[i]['title'],'paths-in');
     }
     var pathsOut = graph.nodes[i]['paths-out'].split(', ');
-    // evaluate each path from the page
+    // evaluate each path FROM the page
     for (var j = 0; j < pathsOut.length; j++) {
-      findConstituentPage(pathsOut[j],graph.nodes[i]['title'],'paths-in');
+      findConstituentPage(pathsOut[j],graph.nodes[i]['title'],'paths-out');
     }
   }
 
