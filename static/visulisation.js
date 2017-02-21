@@ -1,4 +1,4 @@
-var svg = d3.select("svg"),
+var svg = d3.select('#visulisation').select("svg"),
     width = +svg.attr("width"),
     height = +svg.attr("height");
 
