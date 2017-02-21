@@ -16,10 +16,11 @@
 }
 
 .node-group > g.inner {
-  transition: all 0.5s ease-out;
+  /*transition: all 0.5s ease-out;*/
 }
 .node-group.active > g.inner {
-  transform: scale(1.1);
+  opacity: .8;
+  /*transform: scale(1.1);*/
 }
 
 .nodes circle {
