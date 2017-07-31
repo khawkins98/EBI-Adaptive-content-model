@@ -32,15 +32,15 @@
 </header>
 
 <div data-sticky-container>
-  <div id="masthead" class="masthead" data-sticky data-sticky-on="large" data-top-anchor="main-content-area:top" data-btm-anchor="main-content-area:bottom">
+  <div id="masthead" class="masthead compact-for-data" data-sticky data-sticky-on="large" data-top-anchor="main-content-area:top" data-btm-anchor="main-content-area:bottom">
     <div class="masthead-inner row">
       <!-- local-title -->
-      <div class="columns medium-7" id="local-title">
+      <div class="columns large-6" id="local-title">
         <h1><a href="{{ site.domain }}{{ site.baseurl }}" title="Back to {{ site.name }} homepage">{{ site.name }}</a></h1>
-        <h4>An implementation of <a href="http://github.com/ebiwd/EBI-Framework">the EBI Visual Framework  <i class="icon icon-generic small" data-icon="x"></i></a></h4>
       </div>
       <!-- /local-title -->
       <!-- local-nav -->
+      <div class="columns large-6">
       <nav>
         <ul id="local-nav" class="dropdown menu float-left" data-description="navigational" data-dropdown-menu>
           {% comment %}
@@ -83,6 +83,7 @@
 
         </ul> -->
       </nav>
+      </div>
       <!-- /local-nav -->
     </div>
   </div>

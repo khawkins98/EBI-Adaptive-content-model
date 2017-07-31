@@ -15,11 +15,11 @@ var simulation = d3.forceSimulation()
     // .force("link", d3.forceLink()
     .id(function(d) { return d.title; }))
     // .distance( function(d) {
-    //   if (d.title.indexOf('bindingCircleLayer') >= 0 ) { return 10; } 
+    //   if (d.title.indexOf('bindingCircleLayer') >= 0 ) { return 10; }
     //   return 1;
     // }).strength(0.1));
     .force("charge", d3.forceManyBody().strength(function(d){
-      if (d.title.indexOf('orbit') >= 0 ) { return 50; } 
+      if (d.title.indexOf('orbit') >= 0 ) { return 50; }
       return -1000;
     }));
     // .force("charge", d3.forceX( function(d,i){
@@ -60,7 +60,7 @@ d3.json("data.json", function(error, graph) {
       for (var i = 0; i < quadrants; i++) {
         var degreeChunk = 360/quadrants;
 
-        var circleTitle = 'orbit'+orbitStep+'Quadrant'+i; 
+        var circleTitle = 'orbit'+orbitStep+'Quadrant'+i;
 
         var bindingCirleNode = new Object();
           bindingCirleNode.title = circleTitle;
@@ -71,7 +71,7 @@ d3.json("data.json", function(error, graph) {
           bindingCirleNode.fx = (width/2)  + (defaultObritSize * orbitStep) * Math.cos((degreeChunk*i) * Math.PI/180);
           bindingCirleNode.fy = (height/2.6) + (defaultObritSize * orbitStep) * Math.sin((degreeChunk*i) * Math.PI/180);
 
-        graph.nodes.push(bindingCirleNode);      
+        graph.nodes.push(bindingCirleNode);
       }
     }
 
@@ -82,7 +82,7 @@ d3.json("data.json", function(error, graph) {
 
   graph.links.pop(); // empty any test data loaded from the json
 
-  // We programatically generate the links 
+  // We programatically generate the links
   // by pairing the inward/outward paths to constituent pages
   function findConstituentPage(path,childPageTitle,direction) {
     if (path.indexOf('www.ebi.ac.uk') >= 0) {
@@ -118,7 +118,7 @@ d3.json("data.json", function(error, graph) {
 
         // first time, so make a new link...
         var newLink = new Object();
-          newLink.title = newLinkTitle;      
+          newLink.title = newLinkTitle;
           newLink.direction = direction;
           if (direction == 'paths-in') {
             newLink.source = graph.nodes[i]['title'];
@@ -302,11 +302,11 @@ d3.json("data.json", function(error, graph) {
       var dx = d.target.x - d.source.x,
           dy = d.target.y - d.source.y,
           dr = Math.sqrt(dx * dx + dy * dy)*2;
-      return "M" + 
-        d.source.x + "," + 
-        d.source.y + "A" + 
-        dr + "," + dr + " 0 0,1 " + 
-        d.target.x + "," + 
+      return "M" +
+        d.source.x + "," +
+        d.source.y + "A" +
+        dr + "," + dr + " 0 0,1 " +
+        d.target.x + "," +
         d.target.y;
     });
 
@@ -319,7 +319,7 @@ d3.json("data.json", function(error, graph) {
     //     .attr("y1", function(d) { return d.source.y; })
     //     .attr("x2", function(d) { return d.target.x; })
     //     .attr("y2", function(d) { return d.target.y; });
-    
+
     // label
     //   .attr("x", function(d) { return d.x; })
     //   .attr("y", function(d) { return d.y; });
@@ -336,7 +336,7 @@ d3.json("data.json", function(error, graph) {
     link.attr("transform", d3.event.transform);
     // d3.select('#visulisation').select('svg').selectAll('.inner').attr("transform", d3.event.transform);
   }
-  
+
   link.call(d3.drag()
      .on("drag", draggedContainer));
   function draggedContainer(d) {
@@ -393,10 +393,10 @@ function handleMouseOver(d, i) {  // Add interactivity
   // Show the data record
   var infoBox =  wrapInHtmlTag(d.title,'h4');
       infoBox += wrapInHtmlTag(d['content'],'p');
+      infoBox += '<p><a href="' + d['record-url'] + '" class="readmore" target="_blank">View the core content record</a> ';
+      infoBox += '<a href="' + d['analytics-url'] + '" class="readmore" target="_blank">View the analytics report</a></p>';
       infoBox += wrapInHtmlTag('constituent pages','label');
       infoBox += wrapInHtmlTag(commasToBreaks(d['constituent-pages']),'p');
-      infoBox += '<a href="' + d['record-url'] + '" class="button readmore small" target="_blank">View the core content record</a> ';
-      infoBox += '<a href="' + d['analytics-url'] + '" class="button readmore small" target="_blank">View the analytics report</a> ';
       infoBox += wrapInHtmlTag('goals','label');
       infoBox += wrapInHtmlTag(commasToBreaks(d['goals']),'p');
       infoBox += wrapInHtmlTag('audience','label');
