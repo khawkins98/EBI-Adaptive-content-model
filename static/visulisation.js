@@ -391,8 +391,6 @@ function commasToBreaks(content) {
 function handleMouseOver(d, i) {  // Add interactivity
   // activate hover
   d3.select(this).classed("active", true);
-  $('#infobreakout-reveal').foundation('open');
-
 
   // Show the data record
   var infoBox =  wrapInHtmlTag(d.title,'h4');
@@ -411,6 +409,7 @@ function handleMouseOver(d, i) {  // Add interactivity
       infoBox += wrapInHtmlTag(commasToBreaks(d['paths-out']),'p');
 
   $('#infobreakout').html(infoBox);
+  $('#infobreakout-reveal').foundation('open'); // show reveal
 }
 
 function handleMouseOut(d, i) {
