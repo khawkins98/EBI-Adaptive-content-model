@@ -1,6 +1,11 @@
 var svg = d3.select('#visulisation').select("svg"),
-    width = +svg.attr("width"),
-    height = +svg.attr("height");
+  width = $('#visulisation').parent().width(),
+  height = $('#visulisation').parent().height();
+    // width = +svg.attr("width"),
+    // height = +svg.attr("height");
+
+$('#visulisation svg').width(width);
+$('#visulisation svg').height(900);
 
 
 
@@ -215,10 +220,10 @@ d3.json("data.json", function(error, graph) {
         var audienceMembers = d.audience.split(',');
         var radius = calculateNodeMass(d);
         // add one under circle to mask arrows
-        output += '<circle r="' + (radius - 5) + '" class="white-background"></circle>';
+        output += '<circle r="20" class="white-background"></circle>';
         for (var i = 0; i < audienceMembers.length; i++) {
           audienceMembers[i] = audienceMembers[i].replace(/[\W_]+/g," ").trim().toLowerCase().replace(/[\W_]+/g,"-"); // cleanup label to text class
-          output += '<circle transform="translate(' + (rand1toN(16)-8)  + ',' + (rand1toN(16)-8) + ')" r="' + radius + '" class="' + audienceMembers[i] + '"></circle>';
+          output += '<circle transform="translate()" r="' + 5 + '" class="' + audienceMembers[i] + '"></circle>';
         }
 
         // add text labels
@@ -384,11 +389,10 @@ function commasToBreaks(content) {
 
 // Create Event Handlers for mouse
 function handleMouseOver(d, i) {  // Add interactivity
-
-  // console.log(d,i);
-
   // activate hover
   d3.select(this).classed("active", true);
+  $('#infobreakout-reveal').foundation('open');
+
 
   // Show the data record
   var infoBox =  wrapInHtmlTag(d.title,'h4');

@@ -31,27 +31,27 @@
   /*fill: rgba(0,0,0,.1);*/
 }
 
-.nodes circle.white-background { opacity: 1; }
+.nodes circle.white-background { opacity: 1; stroke: none; }
 
 .nodes circle.visitor-familiar-with-embl-ebi,
 .nodes circle.general-visitor-to-embl-ebi,
 .nodes circle.general-familiar,
 .nodes circle.general-new,
-.nodes circle.general { stroke: rgba(0,124,130,.7); }
+.nodes circle.general { fill: rgba(0,124,130,.7); transform: translate(-15px, 8px);}
 
 .nodes circle.educators,
 .nodes circle.students,
 .nodes circle.technology-job-seeker,
 .nodes circle.scientist-new-to-embl-ebi,
-.nodes circle.scientists-external { stroke: rgba(168,200,19,.7); }
+.nodes circle.scientists-external { fill: rgba(168,200,19,.7); transform: translate(-5px, 8px); }
 
 .nodes circle.scientist-familiar-with-embl-ebi,
-.nodes circle.scientists-internal { stroke: rgba(233,180,0,.7); }
+.nodes circle.scientists-internal { fill: rgba(233,180,0,.7); transform: translate(5px, 8px); }
 
 .nodes circle.funder-or-industry-partner,
 .nodes circle.journalists,
 .nodes circle.funders,
-.nodes circle.industry { stroke: rgba(0,134,180,.7); }
+.nodes circle.industry { fill: rgba(0,134,180,.7); transform: translate(15px, 8px); }
 
 
 .ebi-background { background: rgb(0,124,130); }
@@ -155,4 +155,9 @@ a.toggle.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }
 .masthead.compact-for-data.compact-disabled .masthead-inner > nav.column {
   width: 100%;
   left: 0;
+}
+
+.infobreakout-reveal {
+  left: 3rem !important;
+  width: 20rem !important;
 }
