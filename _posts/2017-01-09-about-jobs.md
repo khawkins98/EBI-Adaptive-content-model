@@ -17,7 +17,7 @@ goals:
 - 1. Go to EMBL-hosted job description
 - 2. Read/engage with text on /about/jobs
 - 3. See what it is like to work at EMBL-EBI
-- 4. Find jobs to apply for 
+- 4. Find jobs to apply for
 - 5. Follow us on Twitter (@emblebijobs)
 - 6. Understand what careers are like at EMBL-EBI
 - 7. Explore /about
@@ -25,7 +25,7 @@ goals:
 - 9. Bookmark/return to /about/jobs
 - 10. Share selected pages with a friend
 audience:
-- General 
+- General
 - Technology job seeker
 - Scientists (external)
 - Scientists (internal)
@@ -42,6 +42,8 @@ paths-out:
 - Social media/e-mail share
 - Explore the site
 - www.ebi.ac.uk/about
+outside: 8
+emotional: 5 
 ---
 
-Draw viewers to EMBL-hosted job descriptions pages, and get people interested in working here by viewing career profiles, tech careers, research careers, and “visitor” opportunities. Ultimately we want to raise awareness about what it is to work here, get excited about working here, and pursue applying. 
+Draw viewers to EMBL-hosted job descriptions pages, and get people interested in working here by viewing career profiles, tech careers, research careers, and “visitor” opportunities. Ultimately we want to raise awareness about what it is to work here, get excited about working here, and pursue applying.

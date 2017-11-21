@@ -45,6 +45,8 @@ paths-out:
 - Explore the website
 - Click on any link in the article
 - www.ebi.ac.uk/services/type
+outside: 8
+emotional: 5
 ---
 
 NEED STATEMENT ABOUT MAIN GOAL OF THIS ECOSYSTEM.

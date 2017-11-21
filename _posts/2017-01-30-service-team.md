@@ -21,6 +21,8 @@ paths-in:
 - www.ebi.ac.uk/about/news
 paths-out:
 - n/a
+outside: 5
+emotional: 2
 ---
 
 A markers for the various services
