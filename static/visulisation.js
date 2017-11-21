@@ -74,11 +74,10 @@ d3.json("data.json", function(error, graph) {
     }
   }
 
-
   function generateBindingCircles () {
     // to construct our orbits, we generate "invisible" (unthemed) data points
     var orbits = 3; // the number of rings
-    var defaultObritSize = height/orbits; // the radius
+    var defaultObritSize = (radius-20)/(orbits/2); // the radius of each orbit
     var quadrants = 6; // the number of slices for each orbit
 
     for (var orbitStep = 1; orbitStep <= orbits; orbitStep++) {
@@ -493,6 +492,11 @@ function handleMouseOver(d, i) {  // Add interactivity
       infoBox += wrapInHtmlTag(commasToBreaks(d['paths-in']),'p');
       infoBox += wrapInHtmlTag('paths-out','label');
       infoBox += wrapInHtmlTag(commasToBreaks(d['paths-out']),'p');
+      infoBox += wrapInHtmlTag('inside to outside','label');
+      infoBox += '<span class="block secondary-background text-right white-color" style="width:'+d['outside']+'0%">'+d['outside']+'&nbsp;</span>';
+      infoBox += wrapInHtmlTag('rational vs emotional','label');
+      infoBox += '<span class="block secondary-background text-right white-color" style="width:'+d['emotional']+'0%">'+d['emotional']+'&nbsp;</span>';
+      // infoBox += wrapInHtmlTag(commasToBreaks(),'p');
 
   $('#infobreakout').html(infoBox);
   $('#infobreakout-reveal').foundation('open'); // show reveal
