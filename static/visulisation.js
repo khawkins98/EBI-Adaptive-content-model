@@ -1,3 +1,6 @@
+var showUserDots = false,
+    showExternalAspirational = true;
+
 var svg = d3.select('#visulisation').select("svg")
           .call(d3.zoom().on("zoom", function () {
             svg.attr("transform", d3.event.transform)
@@ -303,9 +306,23 @@ d3.json("data.json", function(error, graph) {
         var radius = calculateNodeMass(d);
         // add one under circle to mask arrows
         output += '<circle r="20" class="white-background"></circle>';
-        for (var i = 0; i < audienceMembers.length; i++) {
-          audienceMembers[i] = audienceMembers[i].replace(/[\W_]+/g," ").trim().toLowerCase().replace(/[\W_]+/g,"-"); // cleanup label to text class
-          output += '<circle transform="translate()" r="' + 5 + '" class="' + audienceMembers[i] + '"></circle>';
+        if (showUserDots) {
+          for (var i = 0; i < audienceMembers.length; i++) {
+            audienceMembers[i] = audienceMembers[i].replace(/[\W_]+/g," ").trim().toLowerCase().replace(/[\W_]+/g,"-"); // cleanup label to text class
+            output += '<circle transform="translate()" r="' + 5 + '" class="' + audienceMembers[i] + '"></circle>';
+          }
+        }
+
+        if (showExternalAspirational) {
+          // infoBox += '<span class="block secondary-background text-right white-color" style="width:'+d['outside']+'0%">'+d['outside']+'&nbsp;</span>';
+          // infoBox += '<span class="block secondary-background text-right white-color" style="width:'+d['emotional']+'0%">'+d['emotional']+'&nbsp;</span>';
+
+          // external vs internal
+          output += '<circle transform="translate()" r="'+((d['outside'])*2)+'" class="external-aspiration" style="opacity:.'+ ((d['outside'])*10) + '" stroke-dasharray=30,'+ (d['outside']-2) + '></circle>';
+
+          // utility vs aspiration
+          output += '<circle transform="translate()" r="'+((d['emotional'])*2)+'" class="emotional" style="opacity:.'+ ((d['emotional'])*10) + '" stroke-dasharray=30,'+ (d['emotional']-2) + '></circle>';
+
         }
 
         // add text labels
@@ -325,7 +342,6 @@ d3.json("data.json", function(error, graph) {
 
       return output;
     });
-
 
 
 

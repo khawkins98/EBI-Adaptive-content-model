@@ -37,7 +37,20 @@
 .nodes circle.general-visitor-to-embl-ebi,
 .nodes circle.general-familiar,
 .nodes circle.general-new,
-.nodes circle.general { fill: rgba(0,124,130,.7); transform: translate(-15px, 8px);}
+.nodes circle.general { fill: rgba(0,124,130,.7); transform: translate(-15px, 8px); }
+
+.nodes circle.external-aspiration {
+  fill: rgba(255,255,255,.7);
+  stroke: rgba(0,124,130,.7);
+  /*transform: translate(-15px, 8px);  */
+}
+
+.nodes circle.emotional {
+  stroke: rgba(255,255,255,.7);
+  fill: rgba(244,107,118,.7);
+  /*transform: translate(-15px, 8px);  */
+}
+
 
 .nodes circle.educators,
 .nodes circle.students,
@@ -160,5 +173,5 @@ a.toggle.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }
 
 .infobreakout-reveal {
   left: 3rem !important;
-  width: 20rem !important;
+  width: 28rem !important;
 }
