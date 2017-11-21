@@ -2,7 +2,7 @@
 layout: post
 title: "News"
 distance-from-core: 2
-quadrant: 0
+quadrant: 1
 record-url:
 - https://docs.google.com/document/d/1M-vOKSzWFqiL0lrwZwdt9m2n7jkBVyMcSrFw843RuVs
 analytics-url:
@@ -19,7 +19,7 @@ goals:
 - 2. Inform visitors about the latest developments
 - 3. Encourage visitors to explore the site further, or try the service/read the article.
 - 4. Inspire visitors to share the stories with others.
-- 5. Tempt them to sign up for the newsletter and/or follow us on Twitter. 
+- 5. Tempt them to sign up for the newsletter and/or follow us on Twitter.
 - 6. Learn about EMBL-EBI and gain understanding of its impact and offerings.
 - 7. Be able to stay in touch (alerts, social media, press contacts)
 - 8. Gain press information (imagery, video, facts, releases)
