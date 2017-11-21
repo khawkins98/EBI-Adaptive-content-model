@@ -67,6 +67,7 @@
   cursor: pointer;
 }
 
+.compass-labels,
 text.label {
   font-size: 11px;
   fill: #666;

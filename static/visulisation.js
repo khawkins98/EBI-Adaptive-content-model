@@ -1,17 +1,37 @@
-var svg = d3.select('#visulisation').select("svg"),
-  width = $('#visulisation').parent().width(),
-  height = $('#visulisation').parent().height();
+var svg = d3.select('#visulisation').select("svg")
+          .call(d3.zoom().on("zoom", function () {
+            svg.attr("transform", d3.event.transform)
+          }))
+          .append('g')
+        ;
+
+
+var width = $('#visulisation').parent().width(),
+    height = $('#visulisation').parent().height()-50,
+    minHeight = 800;
+
+  if (height < minHeight) {
+    height = minHeight;
+  }
+
+  var centerHeight = height/2,
+      radius = height/2.1;
+
     // width = +svg.attr("width"),
     // height = +svg.attr("height");
 
 $('#visulisation svg').width(width);
-$('#visulisation svg').height(900);
-
-
+$('#visulisation svg').height(height);
 
 function rand1toN(N){
   return Math.floor( Math.random() * N );
 }
+
+svg.selectAll('g').call(d3.drag()
+    .on("start", dragstarted)
+    .on("drag", dragged)
+    .on("end", dragended));
+
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -48,7 +68,7 @@ d3.json("data.json", function(error, graph) {
       // center the homepage item
       if (graph.nodes[i]['quadrant'] == 'sun' ) {
         graph.nodes[i].fx = width/2;
-        graph.nodes[i].fy = height/2;
+        graph.nodes[i].fy = centerHeight;
       }
 
     }
@@ -57,8 +77,8 @@ d3.json("data.json", function(error, graph) {
 
   function generateBindingCircles () {
     // to construct our orbits, we generate "invisible" (unthemed) data points
-    var defaultObritSize = 450; // the radius
-    var orbits = 2; // the number of rings
+    var orbits = 3; // the number of rings
+    var defaultObritSize = height/orbits; // the radius
     var quadrants = 6; // the number of slices for each orbit
 
     for (var orbitStep = 1; orbitStep <= orbits; orbitStep++) {
@@ -131,7 +151,6 @@ d3.json("data.json", function(error, graph) {
           } else if (direction == 'paths-out') {
             newLink.source = childPageTitle;
             newLink.target = graph.nodes[i]['title'];
-
           }
           newLink.value = 0.2;
 
@@ -178,6 +197,71 @@ d3.json("data.json", function(error, graph) {
     return (massOfUrls +10) * 3;
   }
 
+  // place a do on our circle's edge
+  // 0deg is north
+
+
+  function circleArcX(degree) {
+    var defaultObritSize = radius; // the radius
+    var quadrants = 4; // the number of slices for each orbit
+    var degreeChunk = 360/quadrants;
+    return (width/2) + (defaultObritSize) * Math.cos((degreeChunk*((degree-90)/90)) * Math.PI/180);
+  }
+  function circleArcY(degree) {
+    var defaultObritSize = radius; // the radius
+    var quadrants = 4; // the number of slices for each orbit
+    var degreeChunk = 360/quadrants;
+    return (centerHeight) + (defaultObritSize) * Math.sin((degreeChunk*((degree-90)/90)) * Math.PI/180);
+  }
+
+  // add the compass
+  var compassCircle = svg.append("g")
+                          .attr("class", "compass")
+                          .append("circle")
+                          .attr("cx", width/2)
+                          .attr("cy", centerHeight)
+                          .attr("r", radius)
+                          .style("stroke-width", "1")
+                          .style("stroke", "#CCC")
+                          .style("fill", "none");
+
+  var compassLabelNorth = svg.append("g")
+                          .attr("class", "compass-labels")
+                          .append("text")
+                          .attr("x", circleArcX(0))
+                          .attr("y", circleArcY(0))
+                          .attr("text-anchor","middle")
+                          .text( function (d) { return "Services"; })
+                          ;
+
+  var compassLabelEast = svg.append("g")
+                          .attr("class", "compass-labels")
+                          .append("text")
+                          .attr("x", circleArcX(90))
+                          .attr("y", circleArcY(90))
+                          .attr("text-anchor","middle")
+                          .text( function (d) { return "Research"; })
+                          ;
+
+  var compassLabelSouth = svg.append("g")
+                          .attr("class", "compass-labels")
+                          .append("text")
+                          .attr("x", circleArcX(180))
+                          .attr("y", circleArcY(180))
+                          .attr("text-anchor","middle")
+                          .text( function (d) { return "Impact and Industry"; })
+                          ;
+
+  var compassLabelWest = svg.append("g")
+                          .attr("class", "compass-labels")
+                          .append("text")
+                          .attr("x", circleArcX(270))
+                          .attr("y", circleArcY(270))
+                          .attr("text-anchor","middle")
+                          .text( function (d) { return "Organisational"; })
+                          ;
+
+
 
   var link = svg.append("g")
       .attr("class", "links")
@@ -188,7 +272,6 @@ d3.json("data.json", function(error, graph) {
       .attr("marker-end", "url(#end)")
       .attr("marker-start", "url(#start)")
       .attr("class", function(d) { if (d.title.indexOf('orbit') >= 0) { return 'orbit'; } return d['direction']; });
-
 
   // make the nodes.
   var node = svg.append("g")
@@ -203,10 +286,10 @@ d3.json("data.json", function(error, graph) {
 
 
     // invoke dragability
-    node.call(d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended));
+    // node.call(d3.drag()
+    //       .on("start", dragstarted)
+    //       .on("drag", dragged)
+    //       .on("end", dragended));
 
     // node.append("circle")
     //   .attr("r", function(d) { return calculateNodeMass(d); })
@@ -332,22 +415,22 @@ d3.json("data.json", function(error, graph) {
 
   // zoom and drag
 
-  var  transform = d3.zoomIdentity;
-  svg.call(d3.zoom()
-      .scaleExtent([1,1])
-      .on("zoom", zoomed));
+  // var  transform = d3.zoomIdentity;
+  // svg.call(d3.zoom()
+  //     .scaleExtent([1,3])
+  //     .on("zoom", zoomed));
+  //
+  // function zoomed() {
+  //   link.attr("transform", d3.event.transform);
+  //   // d3.select('#visulisation').select('svg').selectAll('.inner').attr("transform", d3.event.transform);
+  // }
 
-  function zoomed() {
-    link.attr("transform", d3.event.transform);
-    // d3.select('#visulisation').select('svg').selectAll('.inner').attr("transform", d3.event.transform);
-  }
-
-  link.call(d3.drag()
-     .on("drag", draggedContainer));
-  function draggedContainer(d) {
-    d.fx = d3.event.x;
-    d.fy = d3.event.y;
-  }
+  // link.call(d3.drag()
+  //    .on("drag", draggedContainer));
+  // function draggedContainer(d) {
+  //   d.fx = d3.event.x;
+  //   d.fy = d3.event.y;
+  // }
 
 });
 
@@ -360,6 +443,9 @@ function dragstarted(d) {
 function dragged(d) {
   d.fx = d3.event.x;
   d.fy = d3.event.y;
+
+  d3.select('.compass').attr("transform",function(d) { return "translate(" + d3.event.x + "," + d3.event.y +")" });
+
 }
 
 function dragended(d) {
