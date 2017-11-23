@@ -202,18 +202,18 @@ d3.json("data.json", function(error, graph) {
   // place a do on our circle's edge
   // 0deg is north
 
-
+  var circleOffset = 20; // how many degreees we want to "tilt" the labels
   function circleArcX(degree) {
     var defaultObritSize = radius; // the radius
-    var quadrants = 4; // the number of slices for each orbit
+    var quadrants = 12; // the number of slices for each orbit
     var degreeChunk = 360/quadrants;
-    return (width/2) + (defaultObritSize) * Math.cos((degreeChunk*((degree-90)/90)) * Math.PI/180);
+    return (width/2) + (defaultObritSize) * Math.cos((degreeChunk*(((degree+circleOffset)-degreeChunk)/degreeChunk)) * Math.PI/180);
   }
   function circleArcY(degree) {
     var defaultObritSize = radius; // the radius
-    var quadrants = 4; // the number of slices for each orbit
+    var quadrants = 12; // the number of slices for each orbit
     var degreeChunk = 360/quadrants;
-    return (centerHeight) + (defaultObritSize) * Math.sin((degreeChunk*((degree-90)/90)) * Math.PI/180);
+    return (centerHeight) + (defaultObritSize) * Math.sin((degreeChunk*(((degree+circleOffset)-degreeChunk)/degreeChunk)) * Math.PI/180);
   }
 
   // add the compass
@@ -227,7 +227,7 @@ d3.json("data.json", function(error, graph) {
                           .style("stroke", "#CCC")
                           .style("fill", "none");
 
-  var compassLabelNorth = svg.append("g")
+  var compassLabelServices = svg.append("g")
                           .attr("class", "compass-labels")
                           .append("text")
                           .attr("x", circleArcX(0))
@@ -236,33 +236,50 @@ d3.json("data.json", function(error, graph) {
                           .text( function (d) { return "Services"; })
                           ;
 
-  var compassLabelEast = svg.append("g")
+  var compassLabelResearch = svg.append("g")
                           .attr("class", "compass-labels")
                           .append("text")
-                          .attr("x", circleArcX(90))
-                          .attr("y", circleArcY(90))
+                          .attr("x", circleArcX(60))
+                          .attr("y", circleArcY(60))
                           .attr("text-anchor","middle")
                           .text( function (d) { return "Research"; })
                           ;
 
-  var compassLabelSouth = svg.append("g")
+  var compassLabelImpact = svg.append("g")
                           .attr("class", "compass-labels")
                           .append("text")
-                          .attr("x", circleArcX(180))
-                          .attr("y", circleArcY(180))
+                          .attr("x", circleArcX(140))
+                          .attr("y", circleArcY(140))
                           .attr("text-anchor","middle")
-                          .text( function (d) { return "Impact and Industry"; })
+                          .text( function (d) { return "Impact "; })
                           ;
 
-  var compassLabelWest = svg.append("g")
+  var compassLabelIndustry = svg.append("g")
                           .attr("class", "compass-labels")
                           .append("text")
-                          .attr("x", circleArcX(270))
-                          .attr("y", circleArcY(270))
+                          .attr("x", circleArcX(100))
+                          .attr("y", circleArcY(100))
+                          .attr("text-anchor","middle")
+                          .text( function (d) { return "Industry"; })
+                          ;
+
+  var compassLabelOrganisational = svg.append("g")
+                          .attr("class", "compass-labels")
+                          .append("text")
+                          .attr("x", circleArcX(220))
+                          .attr("y", circleArcY(220))
                           .attr("text-anchor","middle")
                           .text( function (d) { return "Organisational"; })
                           ;
 
+  var compassLabelTraining = svg.append("g")
+                          .attr("class", "compass-labels")
+                          .append("text")
+                          .attr("x", circleArcX(280))
+                          .attr("y", circleArcY(280))
+                          .attr("text-anchor","middle")
+                          .text( function (d) { return "Training"; })
+                          ;
 
 
   var link = svg.append("g")
