@@ -15,9 +15,9 @@
   marker-end: none;
 }
 
-.node-group > g.inner {
-  /*transition: all 0.5s ease-out;*/
-}
+/*.node-group > g.inner {
+  transition: all 0.5s ease-out;
+}*/
 .node-group.active > g.inner {
   opacity: .8;
   /*transform: scale(1.1);*/
@@ -33,26 +33,24 @@
 
 .nodes circle.white-background { opacity: 1; stroke: none; }
 
-.nodes circle.visitor-familiar-with-embl-ebi,
+/*.nodes circle.visitor-familiar-with-embl-ebi,
 .nodes circle.general-visitor-to-embl-ebi,
 .nodes circle.general-familiar,
 .nodes circle.general-new,
-.nodes circle.general { fill: rgba(0,124,130,.7); transform: translate(-15px, 8px); }
+.nodes circle.general { fill: rgba(0,124,130,.7); transform: translate(-15px, 8px); }*/
 
 .nodes circle.external-aspiration {
   fill: rgba(255,255,255,.7);
   stroke: rgba(0,124,130,.7);
-  /*transform: translate(-15px, 8px);  */
 }
 
 .nodes circle.emotional {
   stroke: rgba(255,255,255,.7);
   fill: rgba(244,107,118,.7);
-  /*transform: translate(-15px, 8px);  */
 }
 
 
-.nodes circle.educators,
+/*.nodes circle.educators,
 .nodes circle.students,
 .nodes circle.technology-job-seeker,
 .nodes circle.scientist-new-to-embl-ebi,
@@ -64,23 +62,22 @@
 .nodes circle.funder-or-industry-partner,
 .nodes circle.journalists,
 .nodes circle.funders,
-.nodes circle.industry { fill: rgba(0,134,180,.7); transform: translate(15px, 8px); }
+.nodes circle.industry { fill: rgba(0,134,180,.7); transform: translate(15px, 8px); }*/
 
 
-.ebi-background { background: rgb(0,124,130); }
+/*.ebi-background { background: rgb(0,124,130); }
 .services-background { background: rgb(2,100,105); }
 .research-background { background: rgb(168,200,19); }
 .training-background { background: rgb(233,180,0); }
 .industry-background { background: rgb(0,134,180); }
 .elixir-background { background: rgb(251,106,42); }
-.white-background { background: rgb(255,255,255); }
+.white-background { background: rgb(255,255,255); }*/
 
 
 .nodes circle:hover {
   cursor: pointer;
 }
 
-.compass-labels,
 text.label {
   font-size: 11px;
   fill: #666;
@@ -104,7 +101,7 @@ marker#start path {
 .links path.orbit { display: none; }
 
 /* legend */
-.legend {
+/*.legend {
   position: absolute;
   top: 300px;
   background: #fff;
@@ -139,8 +136,7 @@ a.toggle.professional:before { border-color: rgba(0,134,180,.7); }
 a.toggle.off.general:before,
 a.toggle.off.scientisits-new:before,
 a.toggle.off.scientisits-familiar:before,
-a.toggle.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }
-
+a.toggle.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }*/
 
 /* compact masthead */
 .masthead.compact-for-data .masthead-inner {
