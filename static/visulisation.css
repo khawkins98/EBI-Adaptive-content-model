@@ -27,7 +27,7 @@
   stroke: #FFF;
   stroke-width: 1px;
   fill: rgba(255,255,255,1);
-  opacity: .5;
+  /*opacity: .5;*/
   /*fill: rgba(0,0,0,.1);*/
 }
 
@@ -45,8 +45,8 @@
 }
 
 .nodes circle.emotional {
-  stroke: rgba(255,255,255,.7);
-  fill: rgba(244,107,118,.7);
+  stroke: rgba(255,255,255,1);
+  fill: rgba(218,15,33,1);
 }
 
 
@@ -81,8 +81,18 @@
 text.label {
   font-size: 11px;
   fill: #666;
+  text-shadow:
+    -1px -1px 0 #FFF,
+     1px -1px 0 #FFF,
+    -1px  1px 0 #FFF,
+     1px  1px 0 #FFF;
 }
 
+.compass-labels {
+  font-size: 14px;
+  font-weight: 800;
+  fill: #999;
+}
 
 marker#end path {
   stroke: #fff;
@@ -101,22 +111,37 @@ marker#start path {
 .links path.orbit { display: none; }
 
 /* legend */
-/*.legend {
+.legend {
   position: absolute;
   top: 300px;
   background: #fff;
   border: .5px solid #EEE;
   padding: .75rem 1rem .5rem .75rem;
   line-height: 1.5rem;
+  text-shadow:
+    -1px -1px 0 #FFF,
+     1px -1px 0 #FFF,
+    -1px  1px 0 #FFF,
+     1px  1px 0 #FFF;
 }
-.legend a.toggle {
-  display: block;
+.legend .group.connector-line {
+  position: relative;
+  z-index: 1;
+}
+.legend .group.connector-line:before {
+  border-top: 2px dotted #dfdfdf;
+  content:" ";
+  margin: 0 auto; /* this centers the line to the full width specified */
+  position: absolute; /* positioning must be absolute here, and relative positioning must be applied to the parent */
+  top: 50%; left: 0; right: 0; bottom: 0;
+  width: 80%;
+  z-index: -1;
+}
+.legend a.item {
   border-bottom: none;
+  display: inline-block;
 }
-
-.legend a.toggle:before {
-  content: ".";
-  text-align: center;
+.legend a.item .circle {
   display: inline-block;
   width: 1rem;
   line-height: 1rem;
@@ -126,17 +151,26 @@ marker#start path {
   border: 1.5px solid #ddd;
   border-radius: 1rem;
   margin-right: .4rem;
+  margin-left: .4rem;
+  position: relative;
+  top: 3px;
 }
 
-a.toggle.general:before { border-color: rgba(0,124,130,.7); }
-a.toggle.scientisits-new:before { border-color: rgba(168,200,19,.7); }
-a.toggle.scientisits-familiar:before { border-color: rgba(233,180,0,.7); }
-a.toggle.professional:before { border-color: rgba(0,134,180,.7); }
+.legend a.item.high {
+  float: right;
+}
 
-a.toggle.off.general:before,
-a.toggle.off.scientisits-new:before,
-a.toggle.off.scientisits-familiar:before,
-a.toggle.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }*/
+.legend a.item.low .circle {
+  width: .5rem;
+  height: .5rem;
+  top: 0;
+}
+
+
+a.item.external-aspiration .circle { border-color: rgba(0,124,130,1); }
+a.item.emotional .circle { background-color: rgba(218,15,33,1); }
+
+/*a.item.off.professional:before { border: 1px dashed rgba(0,0,0,.1); }*/
 
 /* compact masthead */
 .masthead.compact-for-data .masthead-inner {

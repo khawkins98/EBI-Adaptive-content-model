@@ -2,7 +2,9 @@ var showUserDots = false,
     showExternalAspirational = true;
 
 var svg = d3.select('#visulisation').select("svg")
-          .call(d3.zoom().on("zoom", function () {
+          .call(d3.zoom()
+          .scaleExtent([.8,3])
+          .on("zoom", function () {
             svg.attr("transform", d3.event.transform)
           }))
           .append('g')
@@ -335,10 +337,10 @@ d3.json("data.json", function(error, graph) {
           // infoBox += '<span class="block secondary-background text-right white-color" style="width:'+d['emotional']+'0%">'+d['emotional']+'&nbsp;</span>';
 
           // external vs internal
-          output += '<circle transform="translate()" r="'+((d['outside'])*2)+'" class="external-aspiration" style="opacity:.'+ ((d['outside'])*10) + '" stroke-dasharray=30,'+ (d['outside']-2) + '></circle>';
+          output += '<circle transform="translate()" r="'+((d['outside'])*2.25)+'" class="external-aspiration" style="Xopacity:.'+ ((d['outside'])*10) + '" stroke-dasharray=30,'+ (d['outside']-2) + '></circle>';
 
-          // utility vs aspiration
-          output += '<circle transform="translate()" r="'+((d['emotional'])*2)+'" class="emotional" style="opacity:.'+ ((d['emotional'])*10) + '" stroke-dasharray=30,'+ (d['emotional']-2) + '></circle>';
+          // utility vs emotional
+          output += '<circle transform="translate()" r="'+((d['emotional'])*2)+'" class="emotional" style="Xopacity:.'+ ((d['emotional'])*10) + '"></circle>';
 
         }
 
